@@ -1,0 +1,13 @@
+# Environment Variables
+.env
+
+# Node Modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Storage Directories
+storage/
