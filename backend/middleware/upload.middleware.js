@@ -12,8 +12,7 @@ function createStorage(folderPath){
     })
 }
 
-export const uploadOrigionalImage = mutler({ storage: createStorage('uploads/originals') });
-export const uploadSteggedImage = mutler({ storage: createStorage('uploads/stegged') });
-export const uploadAnalysis= mutler({ storage: createStorage('uploads/analysis') });
-export const uploadReports = mutler({ storage: createStorage('uploads/reports') });
-
+export const uploadOrigionalImage = multer({ storage: createStorage('uploads/originals') });
+export const uploadSteggedImage = multer({ storage: createStorage('uploads/stegged') });
+export const uploadAnalysis= multer({ storage: createStorage('uploads/analysis') });
+export const uploadReports = multer({ storage: createStorage('uploads/reports') });
