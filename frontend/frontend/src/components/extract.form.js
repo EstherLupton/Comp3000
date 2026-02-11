@@ -5,6 +5,8 @@ function ExtractForm() {
     const [extractedMessage, setExtractedMessage] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [progress, setProgress] = React.useState(0);
+    const [lsbType, setLsbType] = React.useState("sequential");
+    const [secretKey, setSecretKey] = React.useState("");
 
     const handleImageChange = (e) => setImageFile(e.target.files[0]);
 
@@ -12,6 +14,11 @@ function ExtractForm() {
         e.preventDefault();
         if (!imageFile) {
             alert("Please select an image file first.");
+            return;
+        }
+        
+        if (lsbType === "random" && !secretKey) {
+            alert("Please enter a secret key for random LSB.");
             return;
         }
 
@@ -27,6 +34,10 @@ function ExtractForm() {
 
         const formData = new FormData();
         formData.append("image", imageFile);
+        formData.append("lsbType", lsbType);
+        if (lsbType === "random") {
+            formData.append("secretKey", secretKey);
+        }
 
         try {
             const response = await fetch("http://localhost:5000/extract/lsb", {
@@ -58,6 +69,38 @@ function ExtractForm() {
     return (
         <div className="extract-form">
             <h2 className="h5">Extract Message</h2>
+
+            {/* LSB Mode Selection */}
+            <div className="mb-3">
+                <button
+                    type="button"
+                    className={`btn ${lsbType === "sequential" ? "btn-primary" : "btn-outline-primary"} me-2`}
+                    onClick={() => setLsbType("sequential")}
+                >
+                    Sequential LSB
+                </button>
+
+                <button
+                    type="button"
+                    className={`btn ${lsbType === "random" ? "btn-primary" : "btn-outline-primary"}`}
+                    onClick={() => setLsbType("random")}
+                >
+                    Random LSB
+                </button>
+            </div>
+            
+            {lsbType === "random" && (
+                <div className="mb-3">
+                    <label className="form-label">Secret Key</label>
+                    <input
+                        className="form-control"
+                        type="text"
+                        value={secretKey}
+                        onChange={(e) => setSecretKey(e.target.value)}
+                        placeholder="Enter secret key"
+                    />
+                </div>
+            )}
             <form onSubmit={handleExtract}>
                 <div className="mb-3">
                     <label className="form-label">Choose Image</label>

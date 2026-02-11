@@ -2,15 +2,20 @@ import lsbExtract from '../services/analyses.services/lsb.services.js';
 
 async function lsbAnalyses (req, res) {
     try {
-        const storagePath = req.file
-            ? (req.file.destination ? `${req.file.destination}/${req.file.filename}` : req.file.path)
-            : null;
+        const storagePath = req.body?.imagePath || req.file?.path;
+        const allowedTypes = ["sequential", "random"];
+        const mode = (req.body.lsbType || "sequential").toLowerCase();
 
         if (!storagePath) {
             return res.status(400).json({ message: 'No image file provided' });
         }
 
-        const hiddenData = await lsbExtract(storagePath);
+        if (!allowedTypes.includes(mode)) {
+            return res.status(400).json({ message: 'Invalid LSB type' });
+        }
+
+        const lsbOptions = { mode, secretKey: mode === 'random' ? req.body?.secretKey : null };
+        const hiddenData = await lsbExtract(storagePath, lsbOptions);
 
         return res.status(200).json({ hiddenData });
 
