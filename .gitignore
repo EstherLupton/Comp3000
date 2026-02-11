@@ -11,3 +11,6 @@ npm-debug.log*
 
 # Storage Directories
 storage/
+
+# Ignore uploaded images created at runtime
+backend/uploads/
