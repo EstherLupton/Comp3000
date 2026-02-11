@@ -1,3 +1,5 @@
+import sharp from 'sharp';
+
 async function lsbExtract(imagePath){
     const image = sharp(imagePath);
     const pixels = await image.raw().toBuffer({ resolveWithObject: true });
@@ -28,4 +30,6 @@ async function lsbExtract(imagePath){
 
     return message;
 }
+
+export default lsbExtract
 
