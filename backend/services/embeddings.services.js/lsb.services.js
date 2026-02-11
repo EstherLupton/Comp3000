@@ -1,4 +1,6 @@
 import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
 
 async function lsbEmbed(imagePath, hiddenData){
     const image = sharp(imagePath);
@@ -45,18 +47,18 @@ function messageToBinary(message) {
 
 async function createImageFromPixels(pixelData, info) {
     const { width, height, channels } = info;
-    const outputDirectory = 'backend/uploadsstegged';
-    const outputPath = outputDirectory + '/stegged_' + Date.now() + '.png';
+    const outputDirectory = 'uploads/stegged';
+    if (!fs.existsSync(outputDirectory)) {
+        fs.mkdirSync(outputDirectory, { recursive: true });
+    }
+    const outputPath = path.join(outputDirectory, 'stegged_' + Date.now() + '.png');
 
     const newImage = sharp(Buffer.from(pixelData), {
-        raw: {
-            width: width,
-            height: height,
-            channels: channels
-        }
+        raw: { width, height, channels }
     });
 
     await newImage.toFile(outputPath);
     return outputPath;
 }
 
+export default lsbEmbed  

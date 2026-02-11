@@ -1,5 +1,4 @@
-// models/images.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const analysesSchema = new mongoose.Schema(
   {
@@ -12,4 +11,4 @@ const analysesSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('anlyses', analysesSchema);
+export default mongoose.model('analyses', analysesSchema);

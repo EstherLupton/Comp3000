@@ -1,5 +1,4 @@
-// models/embeddings.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const embeddingsSchema = new mongoose.Schema(
   {
@@ -12,4 +11,4 @@ const embeddingsSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('embeddings', embeddingsSchema);
+export default mongoose.model('embeddings', embeddingsSchema);

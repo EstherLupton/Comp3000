@@ -12,8 +12,9 @@ async function validateImage(fileBuffer, fileName) {
     }
 
     let metadata;
+    let image;
     try {
-        const image = await sharp(fileBuffer); 
+        image = sharp(fileBuffer); 
         metadata = await image.metadata();
     } catch (err) {
         throw new Error('Corrupted image file');
@@ -31,12 +32,15 @@ async function validateImage(fileBuffer, fileName) {
         throw new Error('Image file size exceeds allowed limit');
     }
 
-    const expectedUncompressedSize = (metadata.width * metadata.height * (metadata.channels || 3));
-    const minExpectedSize = expectedUncompressedSize * 0.1;
-    const maxExpectedSize = expectedUncompressedSize * 1.5;
-    if (fileBuffer.length < minExpectedSize || fileBuffer.length > maxExpectedSize) {
-        throw new Error('Image file size is inconsistent with its dimensions');
+    const expectedUncompressedSize = metadata.width * metadata.height * (metadata.channels || 3);
+    const { data: rawBuffer } = await image.raw().toBuffer({ resolveWithObject: true });
+    if (rawBuffer.length !== expectedUncompressedSize) {
+    throw new Error('Image uncompressed size is inconsistent with metadata');
     }
 
     return { success: true };
 }
+
+export default {
+    validateImage
+};

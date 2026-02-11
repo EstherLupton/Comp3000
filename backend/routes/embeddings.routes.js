@@ -3,8 +3,6 @@ import embeddingsController from "../controllers/embeddings.controller.js";
 
 const router = express.Router();
 
-router.post("/lsb", embeddingsController.lsbEmbedding);
-router.post("/dct", embeddingsController.dctEmbedding);
-router.post("/adaptive", embeddingsController.adaptiveEmbedding);
+router.post("/", embeddingsController.lsbEmbedding);
 
-module.exports = router;
+export default router;
