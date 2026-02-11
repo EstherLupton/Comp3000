@@ -5,21 +5,31 @@ function EmbedForm() {
     const [message, setMessage] = React.useState("");
     const [steggedUrl, setSteggedUrl] = React.useState("");
     const [loading, setLoading] = React.useState(false);
+    const [lsbType, setLsbType] = React.useState("sequential");
+    const [secretKey, setSecretKey] = React.useState("");
 
-    const handleImageChange = (e) => setImageFile(e.target.files[0]);
-    const handleMessageChange = (e) => setMessage(e.target.value);
-
-    const handleEmbed = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!imageFile || !message) {
             alert("Please select an image file and enter a message.");
             return;
         }
 
+        if (lsbType === "random" && !secretKey) {
+            alert("Please enter a secret key for random LSB.");
+            return;
+        }
+
         setLoading(true);
+
         const formData = new FormData();
         formData.append("image", imageFile);
         formData.append("message", message);
+        formData.append("lsbType", lsbType);
+        if (lsbType === "random") {
+            formData.append("secretKey", secretKey);
+        }
 
         try {
             const response = await fetch("http://localhost:5000/lsb", {
@@ -30,7 +40,7 @@ function EmbedForm() {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Response error:", errorText);
-                alert("Failed to embed message. Status: " + response.status);
+                alert("Failed to embed message.");
                 return;
             }
 
@@ -47,29 +57,75 @@ function EmbedForm() {
     return (
         <div className="embed-form">
             <h2 className="h5">Embed Message</h2>
-            <form onSubmit={handleEmbed}>
+
+            {/* LSB Mode Selection */}
+            <div className="mb-3">
+                <button
+                    type="button"
+                    className={`btn ${lsbType === "sequential" ? "btn-primary" : "btn-outline-primary"} me-2`}
+                    onClick={() => setLsbType("sequential")}
+                >
+                    Sequential LSB
+                </button>
+
+                <button
+                    type="button"
+                    className={`btn ${lsbType === "random" ? "btn-primary" : "btn-outline-primary"}`}
+                    onClick={() => setLsbType("random")}
+                >
+                    Random LSB
+                </button>
+            </div>
+
+            <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label className="form-label">Choose Image</label>
-                    <input className="form-control" type="file" accept="image/*" onChange={handleImageChange} />
+                    <input
+                        className="form-control"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImageFile(e.target.files[0])}
+                    />
                 </div>
 
                 <div className="mb-3">
                     <label className="form-label">Secret Message</label>
-                    <textarea className="form-control" placeholder="Enter your secret message here" value={message} onChange={handleMessageChange}></textarea>
+                    <textarea
+                        className="form-control"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder="Enter your secret message here"
+                    />
                 </div>
 
+                {lsbType === "random" && (
+                    <div className="mb-3">
+                        <label className="form-label">Secret Key</label>
+                        <input
+                            className="form-control"
+                            type="text"
+                            value={secretKey}
+                            onChange={(e) => setSecretKey(e.target.value)}
+                            placeholder="Enter secret key"
+                            required
+                        />
+                    </div>
+                )}
+
                 <button className="btn btn-primary" type="submit" disabled={loading}>
-                    {loading ? 'Embedding…' : 'Embed Message'}
+                    {loading ? "Embedding…" : "Embed Message"}
                 </button>
             </form>
 
             {steggedUrl && (
                 <div className="stegged-result mt-3">
                     <h6>Stegged Image</h6>
-                    <p>
-                        <a href={steggedUrl} target="_blank" rel="noreferrer">Open stegged image</a>
-                    </p>
-                    <img src={steggedUrl} alt="Stegged" className="img-fluid" />
+                    <a href={steggedUrl} target="_blank" rel="noreferrer">
+                        Open stegged image
+                    </a>
+                    <div className="mt-2">
+                        <img src={steggedUrl} alt="Stegged" className="img-fluid" />
+                    </div>
                 </div>
             )}
         </div>
