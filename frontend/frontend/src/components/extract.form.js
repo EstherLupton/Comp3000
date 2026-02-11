@@ -4,29 +4,39 @@ function ExtractForm() {
     const [imageFile, setImageFile] = React.useState(null);
     const [extractedMessage, setExtractedMessage] = React.useState("");
     const [loading, setLoading] = React.useState(false);
+    const [progress, setProgress] = React.useState(0);
 
-    const handleImageChange = (e) => {
-        setImageFile(e.target.files[0]);
-    };
+    const handleImageChange = (e) => setImageFile(e.target.files[0]);
 
     const handleExtract = async (e) => {
         e.preventDefault();
-        console.log('handleExtract clicked', { imageFile });
         if (!imageFile) {
             alert("Please select an image file first.");
             return;
         }
 
         setLoading(true);
+        setProgress(0);
+
+        const interval = setInterval(() => {
+        setProgress(prev => {
+            if (prev >= 90) return prev; 
+            return prev + 10;
+        });
+    }, 300);
+
         const formData = new FormData();
-        formData.append("image", imageFile);  
-        
+        formData.append("image", imageFile);
+
         try {
             const response = await fetch("http://localhost:5000/extract/lsb", {
                 method: "POST",
                 body: formData,
             });
-            
+
+            clearInterval(interval); 
+            setProgress(100);
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Response error:", errorText);
@@ -35,9 +45,7 @@ function ExtractForm() {
             }
 
             const data = await response.json();
-            console.log("Extract response:", data);
             const message = data.extractedMessage || data.hiddenData || "";
-            console.log("Extracted message:", message);
             setExtractedMessage(message);
         } catch (error) {
             console.error("Error extracting message:", error);
@@ -49,21 +57,27 @@ function ExtractForm() {
 
     return (
         <div className="extract-form">
-            <h2>Extract Message from Image</h2>
+            <h2 className="h5">Extract Message</h2>
             <form onSubmit={handleExtract}>
-                <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleImageChange}
-                />
-                <button type="submit" disabled={loading}>
-                    {loading ? "Extracting..." : "Extract Message"}
+                <div className="mb-3">
+                    <label className="form-label">Choose Image</label>
+                    <input className="form-control" type="file" accept="image/*" onChange={handleImageChange} />
+                </div>
+
+                <button className="btn btn-secondary" type="submit" disabled={loading}>
+                    {loading ? "Extracting…" : "Extract Message"}
                 </button>
+                {loading && (
+                    <div className="progress mt-2">
+                        <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style={{ width: `${progress}%` }} aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                )}
             </form>
+
             {extractedMessage && (
-                <div className="extracted-message">
-                    <h3>Extracted Message:</h3>
-                    <p>{extractedMessage}</p>
+                <div className="extracted-message mt-3">
+                    <h6>Extracted Message</h6>
+                    <pre className="p-2 bg-light">{extractedMessage}</pre>
                 </div>
             )}
         </div>

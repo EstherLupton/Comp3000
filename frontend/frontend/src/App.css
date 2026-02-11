@@ -21,11 +21,25 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .App-link {
   color: #61dafb;
+}
+
+
+.card-body h2 {
+  margin-top: 0;
+  margin-bottom: .75rem;
+}
+
+.embed-form textarea {
+  min-height: 120px;
+}
+
+.extracted-message {
+  margin-top: 1rem;
 }
 
 @keyframes App-logo-spin {
