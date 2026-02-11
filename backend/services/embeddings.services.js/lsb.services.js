@@ -1,8 +1,9 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
+import seedrandom from 'seedrandom';
 
-async function lsbEmbed(imagePath, hiddenData){
+async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", secretKey: null }) {
     const image = sharp(imagePath);
     const pixels = await image.raw().toBuffer({ resolveWithObject: true });
     let messageBinary = messageToBinary(hiddenData);
@@ -11,9 +12,24 @@ async function lsbEmbed(imagePath, hiddenData){
     const channels = pixels.info.channels;
     const maxCapacity = channels === 4? (pixels.data.length / 4) * 3 : pixels.data.length; 
     if (messageBinary.length > maxCapacity) {
-        throw new Error('Message too long to embed in image');
+        throw new Error("Message too long to embed in image");
     }
 
+    let newPixels;
+
+    if (lsbType.mode === "random" && lsbType.secretKey) {
+        newPixels = embedRandomly(pixels, messageBinary, lsbType.secretKey, channels   );
+    } else if (lsbType.mode === "sequential") {
+        newPixels = embedSequentially(pixels, messageBinary, channels);
+    } else {
+        throw new Error("Invalid LSB embedding mode");
+    }
+
+    const imageEmbedded = createImageFromPixels(newPixels, pixels.info);
+    return imageEmbedded;
+}
+
+function embedSequentially(pixels, messageBinary, channels) {
     let dataIndex = 0;
     let newPixels = new Uint8Array(pixels.data.length);
     for (let i = 0; i < pixels.data.length; i++) {
@@ -31,10 +47,30 @@ async function lsbEmbed(imagePath, hiddenData){
             newPixels[i] = pixels.data[i];
         }
     }
-
-    const imageEmbedded = createImageFromPixels(newPixels, pixels.info);
-    return imageEmbedded;
+    return newPixels;
 }
+
+function embedRandomly(pixels, messageBinary, secretKey, channels) {
+    const array = Array.from({ length: pixels.data.length }, (_, i) => i);
+    shuffleArray(array, secretKey);
+
+    let dataIndex = 0;
+    let newPixels = new Uint8Array(pixels.data);
+
+    for (let i = 0; i < array.length && dataIndex < messageBinary.length; i++) {
+        const index = array[i];
+        if (channels === 4 && index % 4 === 3) {
+            continue;
+        }
+        let pixelByte = pixels.data[index];
+        let bit = messageBinary[dataIndex];
+        pixelByte = (pixelByte & 0xFE) | parseInt(bit);
+        newPixels[index] = pixelByte;
+        dataIndex++;
+    }
+    return newPixels;
+}
+
 
 function messageToBinary(message) {
     let binaryMessage = '';
@@ -59,6 +95,15 @@ async function createImageFromPixels(pixelData, info) {
 
     await newImage.toFile(outputPath);
     return outputPath;
+}
+
+function shuffleArray(array, secretKey) {
+    const rng = seedrandom(secretKey);
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 export default lsbEmbed  
