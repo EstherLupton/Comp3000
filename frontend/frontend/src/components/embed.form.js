@@ -4,23 +4,19 @@ function EmbedForm() {
     const [imageFile, setImageFile] = React.useState(null);
     const [message, setMessage] = React.useState("");
     const [steggedUrl, setSteggedUrl] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
 
-    const handleImageChange = (e) => {
-        setImageFile(e.target.files[0]);
-    };
-
-    const handleMessageChange = (e) => {
-        setMessage(e.target.value);
-    };
+    const handleImageChange = (e) => setImageFile(e.target.files[0]);
+    const handleMessageChange = (e) => setMessage(e.target.value);
 
     const handleEmbed = async (e) => {
         e.preventDefault();
-        console.log('handleEmbed clicked', { imageFile, message });
         if (!imageFile || !message) {
             alert("Please select an image file and enter a message.");
             return;
         }
 
+        setLoading(true);
         const formData = new FormData();
         formData.append("image", imageFile);
         formData.append("message", message);
@@ -30,45 +26,54 @@ function EmbedForm() {
                 method: "POST",
                 body: formData,
             });
-            console.log("Response status:", response.status);
-            console.log("Response ok:", response.ok);
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Response error:", errorText);
                 alert("Failed to embed message. Status: " + response.status);
                 return;
             }
-            
+
             const data = await response.json();
-            console.log("Response data:", data);
             setSteggedUrl(data.steggedUrl);
         } catch (error) {
             console.error("Error embedding message:", error);
-            console.error("Error stack:", error.stack);
-            console.error("Error message:", error.message);
             alert("Failed to embed message. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
-  return (
-    <div className="embed-form">
-      <h2>Embed Message into Image</h2>
-      <form onSubmit={handleEmbed}>
-        <input type="file" accept="image/*" onChange={handleImageChange} />
-      <textarea placeholder="Enter your secret message here" onChange={handleMessageChange}></textarea>
-      <button type="submit">Embed Message</button>
-    </form>
-        {steggedUrl && (
-            <div className="stegged-result">
-                <h3>Stegged Image</h3>
-                <p>
-                    <a href={steggedUrl} target="_blank" rel="noreferrer">Open stegged image</a>
-                </p>
-                <img src={steggedUrl} alt="Stegged" style={{ maxWidth: '100%' }} />
-            </div>
-        )}
-  </div>
-  );
+    return (
+        <div className="embed-form">
+            <h2 className="h5">Embed Message</h2>
+            <form onSubmit={handleEmbed}>
+                <div className="mb-3">
+                    <label className="form-label">Choose Image</label>
+                    <input className="form-control" type="file" accept="image/*" onChange={handleImageChange} />
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Secret Message</label>
+                    <textarea className="form-control" placeholder="Enter your secret message here" value={message} onChange={handleMessageChange}></textarea>
+                </div>
+
+                <button className="btn btn-primary" type="submit" disabled={loading}>
+                    {loading ? 'Embedding…' : 'Embed Message'}
+                </button>
+            </form>
+
+            {steggedUrl && (
+                <div className="stegged-result mt-3">
+                    <h6>Stegged Image</h6>
+                    <p>
+                        <a href={steggedUrl} target="_blank" rel="noreferrer">Open stegged image</a>
+                    </p>
+                    <img src={steggedUrl} alt="Stegged" className="img-fluid" />
+                </div>
+            )}
+        </div>
+    );
 }
+
 export default EmbedForm;
