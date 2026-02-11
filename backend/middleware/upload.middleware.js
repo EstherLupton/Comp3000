@@ -1,4 +1,4 @@
-import mutler from 'multer';
+import multer from 'multer';
 
 function createStorage(folderPath){
     return multer.diskStorage({
