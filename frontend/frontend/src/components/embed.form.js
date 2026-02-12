@@ -45,6 +45,7 @@ function EmbedForm() {
             }
 
             const data = await response.json();
+            console.log("Backend response:", data);
             setSteggedUrl(data.steggedUrl);
         } catch (error) {
             console.error("Error embedding message:", error);
@@ -53,6 +54,45 @@ function EmbedForm() {
             setLoading(false);
         }
     };
+
+    const handleDownload = async () => {
+    if (!steggedUrl || !imageFile) return;
+
+    try {
+        const response = await fetch(steggedUrl);
+        const blob = await response.blob();
+
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const originalName = imageFile.name;
+        const nameWithoutExt =
+            originalName.substring(0, originalName.lastIndexOf(".")) || originalName;
+        const extension =
+            originalName.substring(originalName.lastIndexOf(".")) || ".png";
+
+        const now = new Date();
+        const formattedDate = now.toISOString()
+            .replace("T", "_")
+            .replace(/:/g, "-")
+            .split(".")[0];
+
+        const finalFileName = `${nameWithoutExt}_stegged_${formattedDate}${extension}`;
+
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = finalFileName;
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(blobUrl);
+
+    } catch (error) {
+        console.error("Download failed:", error);
+    }
+};
+
 
     return (
         <div className="embed-form">
@@ -119,11 +159,13 @@ function EmbedForm() {
 
             {steggedUrl && (
                 <div className="stegged-result mt-3">
-                    <h6>Stegged Image</h6>
-                    <a href={steggedUrl} target="_blank" rel="noreferrer">
-                        Open stegged image
-                    </a>
-                    <div className="mt-2">
+                    <button 
+                        className="btn btn-success mt-2"
+                        onClick={handleDownload}
+                    >
+                        Download Stegged Image
+                    </button>
+                                        <div className="mt-2">
                         <img src={steggedUrl} alt="Stegged" className="img-fluid" />
                     </div>
                 </div>

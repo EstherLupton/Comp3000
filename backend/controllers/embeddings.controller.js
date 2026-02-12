@@ -29,7 +29,11 @@ async function lsbEmbedding(req, res) {
         const embeddedImagePath = await lsbEmbed(storagePath, hiddenData, lsbOptions);
 
 
-        return res.status(200).json({ steggedPath: embeddedImagePath });
+        const normalizedPath = embeddedImagePath.replace(/\\/g, "/");
+
+        return res.status(200).json({
+            steggedUrl: `http://localhost:5000/${normalizedPath}`
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Image embedding failed" });
