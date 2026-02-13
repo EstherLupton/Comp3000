@@ -1,8 +1,9 @@
-import image from '../models/image.model.js';
+// import image from '../models/image.model.js';
+import { validateImageCapacity } from '../services/validation.services/image.validation.services.js';
 
 async function uploadImage(req, res) {
     try {
-        if (req.file = null) {
+        if (req.file === null || req.file === undefined) {
             return res.status(400).json({ message: 'No image uploaded' });
         } else {
             const newImage = {
@@ -51,8 +52,23 @@ async function deleteImageById(req, res) {
     }
 }
 
+async function imageCapacity(req, res) {
+  try {
+    const imagePath = req.file.path;
+    const message = req.body?.message || "";
+
+    const capacity = await validateImageCapacity(imagePath, message);
+
+    return res.status(200).json({ capacity });
+
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+}
+
 export default {
     uploadImage,
     getImageById,
-    deleteImageById
+    deleteImageById,
+    imageCapacity
 }

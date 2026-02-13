@@ -1,4 +1,4 @@
-import lsbEmbed from '../services/embeddings.services.js/lsb.services.js';
+import { lsbEmbed } from '../services/embeddings.services/lsb.services.js';
 
 async function lsbEmbedding(req, res) {
     try {

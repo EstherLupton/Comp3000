@@ -1,6 +1,7 @@
 import sharp from 'sharp';
+import { messageToBinary } from '../embeddings.services/lsb.services.js';
 
-async function validateImage(fileBuffer, fileName) {
+export async function validateImage(fileBuffer, fileName) {
     if (!fileBuffer || !fileName || fileBuffer.length === 0) {
         throw new Error('Image not found');
     }
@@ -41,6 +42,21 @@ async function validateImage(fileBuffer, fileName) {
     return { success: true };
 }
 
-export default {
-    validateImage
-};
+export async function validateImageCapacity(imagePath, hiddenData) {
+    try {
+        const image = sharp(imagePath);
+        const pixels = await image.raw().toBuffer({ resolveWithObject: true });
+        let messageBinary = messageToBinary(hiddenData);
+        messageBinary += "1111111111111110"; 
+
+        const channels = pixels.info.channels;
+        const maxCapacity = channels === 4? (pixels.data.length / 4) * 3 : pixels.data.length; 
+        if (messageBinary.length > maxCapacity) {
+            throw new Error("Message too long to embed in image");
+        }
+        return { maxCapacity, messageBinary, pixels };
+    } catch (error) {
+        throw error;
+    }
+}
+
