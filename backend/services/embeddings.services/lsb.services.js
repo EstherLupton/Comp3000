@@ -5,7 +5,7 @@ import seedrandom from 'seedrandom';
 import { validateImageCapacity } from '../validation.services/image.validation.services.js';
 
 async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", secretKey: null }) {
-    const { maxCapacity, pixels, messageBinary } = await validateImageCapacity(imagePath, hiddenData);
+    const { pixels, messageBinary } = await validateImageCapacity(imagePath, hiddenData);
     let newPixels;
 
     if (lsbType.mode === "random" && lsbType.secretKey) {

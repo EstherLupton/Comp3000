@@ -7,6 +7,7 @@ function EmbedForm() {
     const [loading, setLoading] = React.useState(false);
     const [lsbType, setLsbType] = React.useState("sequential");
     const [secretKey, setSecretKey] = React.useState("");
+    const [remainingCapacity, setCapacity] = React.useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -91,8 +92,43 @@ function EmbedForm() {
     } catch (error) {
         console.error("Download failed:", error);
     }
-};
+    };
 
+
+    const onImageUpload = async (e) => {
+    if (!e?.target?.files?.length) return;
+
+    const file = e.target.files[0];
+    console.log("Selected file:", file);
+
+    setImageFile(file);
+
+    try {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const response = await fetch("http://localhost:5000/capacity", {
+            method: "POST",
+            body: formData,
+        });
+
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Capacity error response:", errorText);
+            return;
+        }
+
+        const data = await response.json();
+
+        const maxChars = Math.floor((data.capacity.maxCapacity - 16) / 8);
+        setCapacity(maxChars); 
+
+    } catch (error) {
+        console.error("Error checking image capacity:", error);
+    }
+
+};
 
     return (
         <div className="embed-form">
@@ -124,18 +160,26 @@ function EmbedForm() {
                         className="form-control"
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setImageFile(e.target.files[0])}
+                        onChange={onImageUpload}
                     />
                 </div>
 
                 <div className="mb-3">
                     <label className="form-label">Secret Message</label>
-                    <textarea
-                        className="form-control"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Enter your secret message here"
-                    />
+                    <div className="textarea-wrapper">
+                        <textarea
+                            className="form-control custom-textarea"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Enter your secret message here"
+                            maxLength={remainingCapacity || undefined}
+                        />
+                        {remainingCapacity !== null && (
+                            <span className="capacity-indicator">
+                                {remainingCapacity - message.length} characters remaining
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 {lsbType === "random" && (

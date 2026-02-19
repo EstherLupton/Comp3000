@@ -20,6 +20,7 @@ app.post('/dct', uploadSteggedImage.single('image'), embeddingsController.dctEmb
 app.post('/adaptive', uploadSteggedImage.single('image'), embeddingsController.adaptiveEmbedding);
 
 app.post('/capacity', uploadSteggedImage.single('image'), imageController.imageCapacity);
+app.post('/validate-capacity', uploadSteggedImage.single('image'), imageController.validateCapacity);
 
 
 app.post('/extract/lsb', uploadAnalysis.single('image'), analysisController.lsbAnalyses);

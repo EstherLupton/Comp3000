@@ -50,3 +50,23 @@
     transform: rotate(360deg);
   }
 }
+
+.textarea-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.custom-textarea {
+    padding-bottom: 28px !important;
+    resize: vertical;
+}
+
+.capacity-indicator {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.8rem;
+    color: #6c757d; 
+    background: transparent;
+    pointer-events: none;
+}
