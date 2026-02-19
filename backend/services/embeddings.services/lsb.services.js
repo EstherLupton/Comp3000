@@ -2,25 +2,16 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 import seedrandom from 'seedrandom';
+import { validateImageCapacity } from '../validation.services/image.validation.services.js';
 
 async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", secretKey: null }) {
-    const image = sharp(imagePath);
-    const pixels = await image.raw().toBuffer({ resolveWithObject: true });
-    let messageBinary = messageToBinary(hiddenData);
-    messageBinary += "1111111111111110"; 
-
-    const channels = pixels.info.channels;
-    const maxCapacity = channels === 4? (pixels.data.length / 4) * 3 : pixels.data.length; 
-    if (messageBinary.length > maxCapacity) {
-        throw new Error("Message too long to embed in image");
-    }
-
+    const { pixels, messageBinary } = await validateImageCapacity(imagePath, hiddenData);
     let newPixels;
 
     if (lsbType.mode === "random" && lsbType.secretKey) {
-        newPixels = embedRandomly(pixels, messageBinary, lsbType.secretKey, channels   );
+        newPixels = embedRandomly(pixels, messageBinary, lsbType.secretKey, pixels.info.channels);
     } else if (lsbType.mode === "sequential") {
-        newPixels = embedSequentially(pixels, messageBinary, channels);
+        newPixels = embedSequentially(pixels, messageBinary, pixels.info.channels);
     } else {
         throw new Error("Invalid LSB embedding mode");
     }
@@ -106,4 +97,4 @@ function shuffleArray(array, secretKey) {
     return array;
 }
 
-export default lsbEmbed  
+export { lsbEmbed, messageToBinary };  

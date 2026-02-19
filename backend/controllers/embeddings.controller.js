@@ -1,12 +1,13 @@
-import lsbEmbed from '../services/embeddings.services.js/lsb.services.js';
+import { lsbEmbed } from '../services/embeddings.services/lsb.services.js';
+import fs from 'fs';
 
 async function lsbEmbedding(req, res) {
     try {
-        const storagePath = req.body?.imagePath || req.file?.path;
+        const storagePath = req.file?.path;
         const hiddenData = req.body?.message;
 
-        if (!storagePath) {
-            return res.status(400).json({ message: 'No image file provided' });
+        if (!storagePath || !fs.existsSync(storagePath)) {
+            return res.status(400).json({ message: 'No valid image file provided' });
         }
         if (!hiddenData) {
             return res.status(400).json({ message: 'No message provided to embed' });
@@ -27,7 +28,7 @@ async function lsbEmbedding(req, res) {
 
         const lsbOptions = { mode, secretKey: secretKey || null };
         const embeddedImagePath = await lsbEmbed(storagePath, hiddenData, lsbOptions);
-
+        
 
         const normalizedPath = embeddedImagePath.replace(/\\/g, "/");
 
