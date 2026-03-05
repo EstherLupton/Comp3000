@@ -1,7 +1,7 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
-import seedrandom from 'seedrandom';
+import { keyToSeed, XORShift } from '../../utils/prng.utils.js';
 import { validateImageCapacity } from '../validation.services/image.validation.services.js';
 
 async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", secretKey: null }) {
@@ -85,13 +85,15 @@ async function createImageFromPixels(pixelData, info) {
     });
 
     await newImage.toFile(outputPath);
-    return outputPath;
+    return outputPath;   
 }
 
 function shuffleArray(array, secretKey) {
-    const rng = seedrandom(secretKey);
+    let seed = keyToSeed(secretKey);
     for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
+        seed = XORShift(seed);
+        const randomFloat = seed / 4294967296;
+        const j = Math.floor(randomFloat * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
