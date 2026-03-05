@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import seedrandom from 'seedrandom';
+import { XORShift, keyToSeed } from '../../utils/prng.utils.js';
 
 async function lsbExtract(imagePath, lsbType = {mode: "sequential", secretKey: null}) {
     const image = sharp(imagePath);
@@ -69,9 +69,11 @@ function analyseRandomly(pixels, secretKey, channels, delimiter) {
 }
 
 function shuffleArray(array, secretKey) {
-    const rng = seedrandom(secretKey);
+    let seed = keyToSeed(secretKey);
     for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
+        seed = XORShift(seed);
+        const randomFloat = seed / 4294967296;
+        const j = Math.floor(randomFloat * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
