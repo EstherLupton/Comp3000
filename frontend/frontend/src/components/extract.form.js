@@ -1,14 +1,22 @@
 import React from "react";
 
-function ExtractForm() {
+function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     const [imageFile, setImageFile] = React.useState(null);
+    const [previewUrl, setPreviewUrl] = React.useState(null);
     const [extractedMessage, setExtractedMessage] = React.useState("");
     const [loading, setLoading] = React.useState(false);
-    const [progress, setProgress] = React.useState(0);
-    const [lsbType, setLsbType] = React.useState("sequential");
+    const [isDragging, setIsDragging] = React.useState(false);
     const [secretKey, setSecretKey] = React.useState("");
+    const [progress, setProgress] = React.useState(0);
 
-    const handleImageChange = (e) => setImageFile(e.target.files[0]);
+    const onImageUpload = (e) => {
+        const file = e.target ? e.target.files[0] : e;
+        if (!file) return;
+        setImageFile(file);
+        setPreviewUrl(URL.createObjectURL(file));
+        setExtractedMessage("");
+        setProgress(0);
+    };
 
     const handleExtract = async (e) => {
         e.preventDefault();
@@ -40,7 +48,8 @@ function ExtractForm() {
         }
 
         try {
-            const response = await fetch("http://localhost:5000/extract/lsb", {
+            const endpoint = embedMethod === "lsb" ? "extract/lsb" : "extract/dct";
+            const response = await fetch(`http://localhost:5000/${endpoint}`, {
                 method: "POST",
                 body: formData,
             });
@@ -68,59 +77,89 @@ function ExtractForm() {
 
     return (
         <div className="extract-form">
-            <h2 className="h5">Extract Message</h2>
 
-            {/* LSB Mode Selection */}
-            <div className="mb-3">
-                <button
-                    type="button"
-                    className={`btn ${lsbType === "sequential" ? "btn-primary" : "btn-outline-primary"} me-2`}
-                    onClick={() => setLsbType("sequential")}
+            <div className="method-selector-label">Extraction Method</div>
+            <div className="embed-extract-buttons">
+                <button 
+                    className={embedMethod === "lsb" ? "active" : ""} 
+                    onClick={() => setEmbedMethod("lsb")}
                 >
-                    Sequential LSB
+                    LSB (Spatial)
                 </button>
-
-                <button
-                    type="button"
-                    className={`btn ${lsbType === "random" ? "btn-primary" : "btn-outline-primary"}`}
-                    onClick={() => setLsbType("random")}
+                <button 
+                    className={embedMethod === "dct" ? "active" : ""} 
+                    onClick={() => setEmbedMethod("dct")}
                 >
-                    Random LSB
+                    DCT (Frequency)
                 </button>
             </div>
-            
-            {lsbType === "random" && (
-                <div className="mb-3">
-                    <label className="form-label">Secret Key</label>
+
+            {embedMethod === "lsb" ? (
+                <div className="lsb-sub-settings animate-slide-down">
+                    <label className="sub-label">LSB Mode</label>
+                    <div className="lsb-mode-buttons">
+                        <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
+                        <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
+                    </div>
+                </div>
+            ) : (
+                <div className="dct-sub-settings animate-slide-down">
+                    <p className="sub-label" style={{margin: 0, opacity: 0.7}}>DCT Extraction Mode Active</p>
+                </div>
+            )}
+
+            <div 
+                className={`file-drop-area ${isDragging ? "dragging" : ""} ${previewUrl ? "has-file" : ""}`} 
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }} 
+                onDragLeave={() => setIsDragging(false)} 
+                onDrop={(e) => { e.preventDefault(); setIsDragging(false); onImageUpload(e.dataTransfer.files[0]); }}
+                onClick={() => document.getElementById('hiddenFileInput').click()}
+            >
+                {previewUrl ? (
+                    <div className="upload-preview">
+                        <img src={previewUrl} alt="Preview" style={{maxHeight: '120px', borderRadius: '8px'}} />
+                        <p style={{marginTop: '10px', fontSize: '0.8rem'}}>Change Source Image</p>
+                    </div>
+                ) : (
+                    <>
+                        <div style={{fontSize: '1.5rem', marginBottom: '8px'}}>🔍</div>
+                        <p>Drop image to extract or <span>browse</span></p>
+                    </>
+                )}
+                <input 
+                    id="hiddenFileInput"
+                    type="file" 
+                    accept="image/*" 
+                    onChange={onImageUpload} 
+                    style={{display: 'none'}} 
+                />
+            </div>
+
+            {lsbType === "random" && embedMethod === "lsb" && (
+                <div className="glass-input-group mt-3 animate-slide-down">
+                    <label>Secret Key</label>
                     <input
                         className="form-control"
-                        type="text"
+                        type="password"
                         value={secretKey}
                         onChange={(e) => setSecretKey(e.target.value)}
-                        placeholder="Enter secret key"
+                        placeholder="Enter the key used to hide the message"
                     />
                 </div>
             )}
-            <form onSubmit={handleExtract}>
-                <div className="mb-3">
-                    <label className="form-label">Choose Image</label>
-                    <input className="form-control" type="file" accept="image/*" onChange={handleImageChange} />
-                </div>
 
-                <button className="btn btn-secondary" type="submit" disabled={loading}>
-                    {loading ? "Extracting…" : "Extract Message"}
-                </button>
-                {loading && (
-                    <div className="progress mt-2">
-                        <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style={{ width: `${progress}%` }} aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                )}
-            </form>
+            <button className="glow-button mt-4 w-100" onClick={handleExtract} disabled={loading || !imageFile}>
+                {loading ? "Extracting..." : "Extract Message"}
+            </button>
 
             {extractedMessage && (
-                <div className="extracted-message mt-3">
-                    <h6>Extracted Message</h6>
-                    <pre className="p-2 bg-light">{extractedMessage}</pre>
+                <div className="stegged-result mt-4 animate-slide-down">
+                    <div className="glass-input-group">
+                        <label>Extracted Message</label>
+                        <div className="extracted-result-box" style={{minHeight: '100px', background: 'rgba(0,0,0,0.2)'}}>
+                            {extractedMessage}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
