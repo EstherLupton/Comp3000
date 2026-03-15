@@ -1,4 +1,3 @@
-// import image from '../models/image.model.js';
 import { validateImageCapacity } from '../services/validation.services/image.validation.services.js';
 import { calculateImageCapacity } from '../services/validation.services/image.validation.services.js';
 
@@ -56,10 +55,15 @@ async function deleteImageById(req, res) {
 async function imageCapacity(req, res) {
   try {
     const imagePath = req.file.path;
-    const { maxCapacity } = await calculateImageCapacity(imagePath);
-    const maxBytes = Math.floor((maxCapacity - 16) / 8);
 
-    return res.status(200).json({ capacity: { maxCapacity: maxBytes } });
+    const { capacityBits, capacityChars } = await calculateImageCapacity(imagePath);
+
+    return res.status(200).json({
+      capacity: {
+        bits: capacityBits,
+        characters: capacityChars
+      }
+    });
 
   } catch (err) {
     return res.status(400).json({ error: err.message });

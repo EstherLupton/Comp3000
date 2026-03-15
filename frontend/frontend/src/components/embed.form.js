@@ -1,9 +1,9 @@
 import React from "react";
 
-function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
+
+function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDifferenceMap, setSteggedUrl, setOriginalImage, steggedUrl }) {
     const [imageFile, setImageFile] = React.useState(null);
     const [message, setMessage] = React.useState("");
-    const [steggedUrl, setSteggedUrl] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [secretKey, setSecretKey] = React.useState("");
     const [remainingCapacity, setCapacity] = React.useState(null);
@@ -30,6 +30,11 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
         const formData = new FormData();
         formData.append("image", imageFile);
         formData.append("message", message);
+
+        const encoder = new TextEncoder(); 
+        const byteArray = encoder.encode(message);
+        const byteLength = byteArray.length;
+
         if (embedMethod === "lsb") {
             formData.append("lsbType", lsbType);
             if (lsbType === "random"){ 
@@ -55,6 +60,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
 
             const data = await response.json();
             setSteggedUrl(data.steggedUrl);
+            setDifferenceMap(data.differenceUrl);
         } catch (error) {
             console.error("Error embedding message:", error);
             alert("Failed to embed message. Please try again.");
@@ -106,13 +112,14 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
         const file = e.target ? e.target.files[0] : e; 
         if (!file) return;
 
+        const url = URL.createObjectURL(file);
         setImageFile(file);
-        setPreviewUrl(URL.createObjectURL(file));
+        setPreviewUrl(url);
+        setOriginalImage(url)
 
         try {
             const formData = new FormData();
             formData.append("image", file);
-
             const response = await fetch("http://localhost:5000/capacity", {
                 method: "POST",
                 body: formData,
@@ -127,9 +134,8 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             
             const data = await response.json();
 
-            const maxChars = Math.floor((data.capacity.maxCapacity - 16) / 8);
-            setCapacity(maxChars);
-
+            const maxBits = data.capacity.bits;
+            setCapacity(Math.floor((maxBits / 8)*0.99545));
         } catch (error) {
             console.error("Error checking image capacity:", error);
         }

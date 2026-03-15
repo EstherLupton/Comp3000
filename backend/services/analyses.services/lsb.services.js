@@ -22,7 +22,6 @@ async function lsbExtract(imagePath, lsbType = {mode: "sequential", secretKey: n
 
 function analyseSequentially(pixels, channels, delimiter) {
     let binaryMessage = '';
-    let message = '';
     for (let i = 0; i < pixels.data.length; i++) {
         if (channels === 4 && i % 4 === 3) continue;
         const bit = pixels.data[i] & 0x01;
@@ -34,11 +33,7 @@ function analyseSequentially(pixels, channels, delimiter) {
         }
     }
 
-    for (let i = 0; i < binaryMessage.length; i += 8) {
-        const byte = binaryMessage.slice(i, i + 8);
-        message += String.fromCharCode(parseInt(byte, 2));
-    }
-
+    const message = binaryToText(binaryMessage);
     return message;
 }
 
@@ -58,14 +53,23 @@ function analyseRandomly(pixels, secretKey, channels, delimiter) {
             break;
         }
     }
-
-    let message = '';
-    for (let i = 0; i < binaryMessage.length; i += 8) {
-        const byte = binaryMessage.slice(i, i + 8);
-        message += String.fromCharCode(parseInt(byte, 2));
-    }
+    const message = binaryToText(binaryMessage);
 
     return message;
+}
+
+function binaryToText(binaryMessage) {
+    const bytes = [];
+
+    for (let i = 0; i < binaryMessage.length; i += 8) {
+        const byte = binaryMessage.slice(i, i + 8);
+        if (byte.length === 8) {
+            bytes.push(parseInt(byte, 2));
+        }
+    }
+
+    const decoder = new TextDecoder();
+    return decoder.decode(new Uint8Array(bytes));
 }
 
 function shuffleArray(array, secretKey) {
