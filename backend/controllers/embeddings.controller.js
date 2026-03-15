@@ -27,13 +27,14 @@ async function lsbEmbedding(req, res) {
         }
 
         const lsbOptions = { mode, secretKey: secretKey || null };
-        const embeddedImagePath = await lsbEmbed(storagePath, hiddenData, lsbOptions);
+        const { imageEmbeddedPath, differenceMapPath } = await lsbEmbed(storagePath, hiddenData, lsbOptions);
         
-
-        const normalizedPath = embeddedImagePath.replace(/\\/g, "/");
-
+        const embedNormalizedPath = imageEmbeddedPath.replace(/\\/g, "/");
+        const differenceNormalizedPath = differenceMapPath.replace(/\\/g, "/");
+        
         return res.status(200).json({
-            steggedUrl: `http://localhost:5000/${normalizedPath}`
+            steggedUrl: `http://localhost:5000/${embedNormalizedPath}`,
+            differenceUrl: `http://localhost:5000/${differenceNormalizedPath}`
         });
     } catch (error) {
         console.error(error);

@@ -8,7 +8,7 @@
     --card-bg: rgba(30, 41, 59, 0.5);
     --card-border: rgba(255, 255, 255, 0.08);
     --card-reflection: rgba(255, 255, 255, 0.15);
-    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-bg: #0f172a99;
     --input-focus-bg: rgba(15, 23, 42, 0.8);
     --shadow-main: rgba(0, 0, 0, 0.3);
     --dropzone-hover: rgba(59, 130, 246, 0.05);
@@ -387,4 +387,45 @@
     text-shadow: 
         0 0 8px rgba(37, 99, 235, 0.6), 
         0 0 15px rgba(37, 99, 235, 0.8);
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.preview-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.column-label {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 350px;
+  border-radius: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  height: 200px;
+  border: 2px dashed var(--card-border);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.empty-icon {
+  font-size: 30px;
+  margin-bottom: 8px;
 }

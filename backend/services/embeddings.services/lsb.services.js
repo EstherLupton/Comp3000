@@ -1,12 +1,21 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid'
 import { keyToSeed, XORShift } from '../../utils/prng.utils.js';
 import { validateImageCapacity } from '../validation.services/image.validation.services.js';
 
 async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", secretKey: null }) {
     const { pixels, messageBinary } = await validateImageCapacity(imagePath, hiddenData);
+    const fileId = uuidv4();
     let newPixels;
+
+    const outputDirectory = 'uploads/originals';
+    if (!fs.existsSync(outputDirectory)) {
+        fs.mkdirSync(outputDirectory, { recursive: true });
+    }
+    const originalPath = path.join(outputDirectory, `original_${fileId}.png`);
+    await sharp(imagePath).toFile(originalPath);
 
     if (lsbType.mode === "random" && lsbType.secretKey) {
         newPixels = embedRandomly(pixels, messageBinary, lsbType.secretKey, pixels.info.channels);
@@ -16,8 +25,10 @@ async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", s
         throw new Error("Invalid LSB embedding mode");
     }
 
-    const imageEmbedded = createImageFromPixels(newPixels, pixels.info);
-    return imageEmbedded;
+    const imageEmbeddedPath = await createImageFromPixels(newPixels, pixels.info, fileId);
+    const differenceMapPath = await differenceMap(originalPath, imageEmbeddedPath, fileId);
+
+    return {imageEmbeddedPath, differenceMapPath}
 }
 
 function embedSequentially(pixels, messageBinary, channels) {
@@ -64,21 +75,23 @@ function embedRandomly(pixels, messageBinary, secretKey, channels) {
 
 
 function messageToBinary(message) {
+    const encoder = new TextEncoder();
+    const encodedMessage = encoder.encode(message);
+    
     let binaryMessage = '';
-    for (let i = 0; i < message.length; i++) {
-        const asciiValue = message.charCodeAt(i);
-        binaryMessage += asciiValue.toString(2).padStart(8, '0');
+    for (const byte of encodedMessage) {
+        binaryMessage += byte.toString(2).padStart(8, '0');
     }
     return binaryMessage;
 }
 
-async function createImageFromPixels(pixelData, info) {
+async function createImageFromPixels(pixelData, info, fileId) {
     const { width, height, channels } = info;
     const outputDirectory = 'uploads/stegged';
     if (!fs.existsSync(outputDirectory)) {
         fs.mkdirSync(outputDirectory, { recursive: true });
     }
-    const outputPath = path.join(outputDirectory, 'stegged_' + Date.now() + '.png');
+    const outputPath = path.join(outputDirectory, `stegged_${fileId}.png`);
 
     const newImage = sharp(Buffer.from(pixelData), {
         raw: { width, height, channels }
@@ -99,4 +112,69 @@ function shuffleArray(array, secretKey) {
     return array;
 }
 
-export { lsbEmbed, messageToBinary };  
+async function differenceMap(originalImagePath, steggedImagePath, fileId) {
+
+    const original = sharp(originalImagePath);
+    const stegged = sharp(steggedImagePath);
+
+    const [meta, buffer1, buffer2] = await Promise.all([
+        original.metadata(),
+        original.raw().toBuffer(),
+        stegged.raw().toBuffer()
+    ]);
+
+    const { width, height, channels } = meta;
+
+    const differenceData = new Uint8Array(buffer1.length);
+
+    for (let i = 0; i < buffer1.length; i += channels) {
+
+        let changedChannels = 0;
+
+        for (let c = 0; c < channels; c++) {
+
+            if (channels === 4 && c === 3) continue; // skip alpha
+
+            const originalLSB = buffer1[i + c] & 1;
+            const stegoLSB = buffer2[i + c] & 1;
+
+            if (originalLSB !== stegoLSB) {
+                changedChannels++;
+            }
+        }
+
+        if (changedChannels > 0) {
+
+            // intensity based on number of channels changed
+            const intensity = Math.floor((changedChannels / 3) * 255);
+
+            differenceData[i] = 255;              // strong red
+            differenceData[i + 1] = 255 - intensity;
+            differenceData[i + 2] = 255 - intensity;
+
+        } else {
+
+            differenceData[i] = buffer1[i];
+            differenceData[i + 1] = buffer1[i + 1];
+            differenceData[i + 2] = buffer1[i + 2];
+
+        }
+
+        if (channels === 4) {
+            differenceData[i + 3] = buffer1[i + 3];
+        }
+    }
+
+    const directory = 'uploads/differenceMap';
+    if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
+
+    const outputPath = path.join(directory, `difference_${fileId}.png`);
+
+    await sharp(differenceData, {
+        raw: { width, height, channels }
+    }).toFile(outputPath);
+
+    return outputPath;
+}
+
+export { lsbEmbed, messageToBinary, differenceMap };

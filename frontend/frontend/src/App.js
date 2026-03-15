@@ -1,6 +1,7 @@
 import React from 'react';
 import EmbedForm from './components/embed.form';
 import ExtractForm from './components/extract.form';
+import ImageViews from "./components/image.views";
 import { INSTRUCTIONS } from "./constants";
 import './App.css';
 
@@ -9,6 +10,9 @@ function App() {
   const [embedMethod, setEmbedMethod] = React.useState("lsb");
   const [lsbType, setLsbType] = React.useState("sequential");
   const [theme, setTheme] = React.useState(localStorage.getItem('theme') || 'dark');
+  const [originalImage, setOriginalImage] = React.useState(null);
+  const [steggedImage, setSteggedImage] = React.useState(null);
+  const [differenceMap, setDifferenceMap] = React.useState(null);
 
   const getSteps = () => {
   const mode = activeTab; 
@@ -78,6 +82,10 @@ function App() {
                   setEmbedMethod={setEmbedMethod}  
                   lsbType={lsbType}                
                   setLsbType={setLsbType}
+                  setDifferenceMap={setDifferenceMap} 
+                  setSteggedUrl={setSteggedImage}
+                  setOriginalImage={setOriginalImage}
+                  steggedUrl={steggedImage}
                 /> 
               ) : (
                 <ExtractForm 
@@ -92,12 +100,13 @@ function App() {
         </main>
 
         <aside className="side-column-preview-card">
-          <div className="column-label">Image Preview</div>
+          <div className="column-label">Image Data Map</div>
           <div className="preview-container">
-            <div className="empty-state">
-              <div className="empty-icon">📷</div>
-              <p>No Image Selected</p>
-            </div>
+            <ImageViews
+              original={originalImage}
+              stegged={steggedImage}
+              difference={differenceMap}
+            />
           </div>
         </aside>
       </div>

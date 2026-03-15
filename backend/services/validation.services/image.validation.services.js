@@ -43,30 +43,35 @@ export async function validateImage(fileBuffer, fileName) {
 }
 
 export async function validateImageCapacity(imagePath, hiddenData) {
-    const { maxCapacity } = await calculateImageCapacity(imagePath);
-    
+
     const image = sharp(imagePath);
     const pixels = await image.raw().toBuffer({ resolveWithObject: true });
+
+    const { width, height, channels } = pixels.info;
+
+    const usableChannels = channels === 4 ? 3 : channels;
+    const capacityBits = (width * height * usableChannels) - 16;
+
     let messageBinary = messageToBinary(hiddenData);
     messageBinary += "1111111111111110";
 
-    if (messageBinary.length > maxCapacity) {
+    if (messageBinary.length > capacityBits) {
         throw new Error("Message too long to embed in image");
     }
-    return {  pixels, messageBinary };
+
+    return { pixels, messageBinary };
 }
 
 export async function calculateImageCapacity(imagePath) {
     const image = sharp(imagePath);
     const pixels = await image.raw().toBuffer({ resolveWithObject: true });
 
-    if (!pixels || !pixels.info) {
-        throw new Error("Unable to read image info for capacity calculation");
-    }
+    const { width, height, channels } = pixels.info;
 
-    const channels = pixels.info.channels;
-    const maxCapacity = channels === 4 ? (pixels.data.length / 4) * 3 : pixels.data.length;
+    const usableChannels = channels === 4 ? 3 : channels;
 
-    return { maxCapacity };
+    const capacityBits = (width * height * usableChannels) - 16;
+    const capacityChars = Math.floor(capacityBits / 8);
+
+    return { capacityBits, capacityChars };
 }
-
