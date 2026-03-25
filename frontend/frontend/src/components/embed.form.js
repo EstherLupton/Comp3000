@@ -9,7 +9,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     const [remainingCapacity, setCapacity] = React.useState(null);
     const [isDragging, setIsDragging] = React.useState(false);
     const [previewUrl, setPreviewUrl] = React.useState(null);
-    const [dctQuality, setDctQuality] = React.useState(80);
+    const [dctOptions, setDctOptions] = React.useState(80);
     const [showPassword, setShowPassword] = React.useState(false);
 
     const handleSubmit = async (e) => {
@@ -41,7 +41,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 formData.append("secretKey", secretKey);
             }
         } else if (embedMethod === "dct") {
-            formData.append("dctQuality", dctQuality);
+            formData.append("dctOptions", dctOptions);
         }
 
         try {
@@ -81,9 +81,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             const originalName = imageFile.name;
             const nameWithoutExt = 
                 originalName.substring(0, originalName.lastIndexOf(".")) || originalName;
-            const extension = 
-                originalName.substring(originalName.lastIndexOf(".")) || ".png";
-
+            const extension = ".png"
             const now = new Date();
             const formattedDate = now.toISOString()
             .replace("T", "_")
@@ -120,6 +118,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
         try {
             const formData = new FormData();
             formData.append("image", file);
+            formData.append("embedMethod", embedMethod);
             const response = await fetch("http://localhost:5000/capacity", {
                 method: "POST",
                 body: formData,
@@ -171,14 +170,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 </div>
             ) : (
                 <div className="dct-sub-settings animate-slide-down">
-                <label className="sub-label">DCT Quality Factor: {dctQuality}</label>
-                <input 
-                    type="range" 
-                    min="10" max="100" 
-                    value={dctQuality} 
-                    onChange={(e) => setDctQuality(e.target.value)}
-                    className="custom-range"
-                />
+                    <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
 

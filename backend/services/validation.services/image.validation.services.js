@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { messageToBinary } from '../embeddings.services/lsb.services.js';
+import { messageToBinary } from '../../utils/convert.utils.js'
 
 export async function validateImage(fileBuffer, fileName) {
     if (!fileBuffer || !fileName || fileBuffer.length === 0) {
@@ -62,7 +62,7 @@ export async function validateImageCapacity(imagePath, hiddenData) {
     return { pixels, messageBinary };
 }
 
-export async function calculateImageCapacity(imagePath) {
+export async function calculateImageCapacityLsb(imagePath) {
     const image = sharp(imagePath);
     const pixels = await image.raw().toBuffer({ resolveWithObject: true });
 
@@ -75,3 +75,29 @@ export async function calculateImageCapacity(imagePath) {
 
     return { capacityBits, capacityChars };
 }
+
+export async function calculateImageCapacityDct(imagePath) {
+    const image = sharp(imagePath);
+    const pixels = await image.raw().toBuffer({ resolveWithObject: true });
+
+    const { width, height } = pixels.info;
+
+    const blocksWide = Math.floor(width / 8);
+    const blocksHigh = Math.floor(height / 8);
+    const totalBlocks = blocksWide * blocksHigh;
+    const usableBlocks = Math.floor(totalBlocks / 3);
+
+    const capacityBits = usableBlocks;
+
+    const availableBits = Math.max(0, capacityBits - 16);
+    
+    const capacityChars = Math.floor(availableBits / 8);
+
+    return { 
+        capacityBits: availableBits, 
+        capacityChars,
+        totalBlocks,
+        usableBlocks
+    };
+}
+

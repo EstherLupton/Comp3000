@@ -4,6 +4,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid'
 import { keyToSeed, XORShift } from '../../utils/prng.utils.js';
 import { validateImageCapacity } from '../validation.services/image.validation.services.js';
+import { messageToBinary } from '../../utils/convert.utils.js';
 
 async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", secretKey: null }) {
     const { pixels, messageBinary } = await validateImageCapacity(imagePath, hiddenData);
@@ -71,18 +72,6 @@ function embedRandomly(pixels, messageBinary, secretKey, channels) {
         dataIndex++;
     }
     return newPixels;
-}
-
-
-function messageToBinary(message) {
-    const encoder = new TextEncoder();
-    const encodedMessage = encoder.encode(message);
-    
-    let binaryMessage = '';
-    for (const byte of encodedMessage) {
-        binaryMessage += byte.toString(2).padStart(8, '0');
-    }
-    return binaryMessage;
 }
 
 async function createImageFromPixels(pixelData, info, fileId) {
@@ -177,4 +166,4 @@ async function differenceMap(originalImagePath, steggedImagePath, fileId) {
     return outputPath;
 }
 
-export { lsbEmbed, messageToBinary, differenceMap };
+export { lsbEmbed, differenceMap };
