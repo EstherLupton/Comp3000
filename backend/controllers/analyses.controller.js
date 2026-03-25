@@ -1,4 +1,6 @@
 import lsbExtract from '../services/analyses.services/lsb.services.js';
+import { dctExtract } from '../services/analyses.services/dct.services.js';
+import fs from 'fs';
 
 async function lsbAnalyses (req, res) {
     try {
@@ -26,7 +28,27 @@ async function lsbAnalyses (req, res) {
 }
 
 async function dctAnalyses (req, res) {
-    return res.status(501).json({ message: 'DCT analysis not implemented' });
+    try {
+        const storagePath = req.file?.path;
+        const dctOptions = req.body?.dctOptions
+
+
+        if (!storagePath || !fs.existsSync(storagePath)) {
+            return res.status(400).json({ message: 'No valid image file provided' });
+        }
+
+        if (!dctOptions) {
+            return res.status(400).json({ message: 'No dct frequency provided' });
+        }
+
+        const hiddenData = await dctExtract(storagePath, dctOptions);
+        
+        return res.status(200).json({ hiddenData });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Image embedding failed" });
+    }
 }
 
 async function adaptiveAnalyses (req, res) {

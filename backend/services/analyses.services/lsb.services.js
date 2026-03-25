@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { XORShift, keyToSeed } from '../../utils/prng.utils.js';
+import { binaryToText } from '../../utils/convert.utils.js';
 
 async function lsbExtract(imagePath, lsbType = {mode: "sequential", secretKey: null}) {
     const image = sharp(imagePath);
@@ -56,20 +57,6 @@ function analyseRandomly(pixels, secretKey, channels, delimiter) {
     const message = binaryToText(binaryMessage);
 
     return message;
-}
-
-function binaryToText(binaryMessage) {
-    const bytes = [];
-
-    for (let i = 0; i < binaryMessage.length; i += 8) {
-        const byte = binaryMessage.slice(i, i + 8);
-        if (byte.length === 8) {
-            bytes.push(parseInt(byte, 2));
-        }
-    }
-
-    const decoder = new TextDecoder();
-    return decoder.decode(new Uint8Array(bytes));
 }
 
 function shuffleArray(array, secretKey) {

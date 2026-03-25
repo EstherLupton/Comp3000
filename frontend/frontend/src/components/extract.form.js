@@ -8,6 +8,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     const [isDragging, setIsDragging] = React.useState(false);
     const [secretKey, setSecretKey] = React.useState("");
     const [progress, setProgress] = React.useState(0);
+    const [dctOptions, setDctOptions] = React.useState(80);
 
     const onImageUpload = (e) => {
         const file = e.target ? e.target.files[0] : e;
@@ -45,6 +46,9 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
         formData.append("lsbType", lsbType);
         if (lsbType === "random") {
             formData.append("secretKey", secretKey);
+        }
+        if (embedMethod === "dct") {
+            formData.append("dctOptions", dctOptions);
         }
 
         try {
@@ -104,7 +108,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                 </div>
             ) : (
                 <div className="dct-sub-settings animate-slide-down">
-                    <p className="sub-label" style={{margin: 0, opacity: 0.7}}>DCT Extraction Mode Active</p>
+                    <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
 
@@ -121,6 +125,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                         <p style={{marginTop: '10px', fontSize: '0.8rem'}}>Change Source Image</p>
                     </div>
                 ) : (
+                
                     <>
                         <div style={{fontSize: '1.5rem', marginBottom: '8px'}}>🔍</div>
                         <p>Drop image to extract or <span>browse</span></p>

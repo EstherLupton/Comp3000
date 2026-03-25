@@ -1,4 +1,57 @@
-async function dctExtract(imagePath){
+import sharp from 'sharp';
+import { getBlock, applyForwardDct, quantize } from '../../utils/dct.utils.js';
+import { binaryToText } from '../../utils/convert.utils.js';
 
-    return imageAnlysesPath
+/**
+ * The DCT algorithm used in this service is based on the "Shield Algorithm" proposed in:
+ * Bansal, D., & Chhikara, R. (2014). An Improved DCT based Steganography Technique. 
+ * International Journal of Computer Applications, 102(14), 46-49.
+ * https://scispace.com/pdf/an-improved-dct-based-steganography-technique-kp4xyp407g.pdf
+ */
+
+async function dctExtract(imagePath, messageLength, dctOptions) {
+    const image = sharp(imagePath);
+    const { data, info } = await image.removeAlpha().toColorspace('srgb').raw().toBuffer({ resolveWithObject: true });
+
+    const delimiter = "1111111111111110";
+    let binaryMessage = '';
+    let extractedBits = 0;
+
+    for (let i = 0; i < info.height; i += 8) {
+        for (let j = 0; j < info.width; j += 8) {
+            if (i + 8 > info.height || j + 8 > info.width) {
+                continue;
+            }
+
+            const block = getBlock(data, j, i, info.width);
+            const r = block.map(row => row.map(pixel => pixel[0]));
+            
+            const dctR = applyForwardDct(r);
+            const quantR = quantize(dctR);
+
+            const dcCoeff = Math.round(quantR[0][0]);
+           
+            const extractedBit = Math.round(dcCoeff / 2) % 2 === 0 ? '0' : '1';
+
+            if (extractedBits === 0) {
+                const rVal = r[0][0]; 
+            }
+
+            binaryMessage += extractedBit;
+            extractedBits++;
+
+            if (binaryMessage.endsWith(delimiter)) {
+                const message = binaryToText(binaryMessage.slice(0, -delimiter.length));
+                return message;
+            }
+
+            if (messageLength && extractedBits >= (messageLength * 8) + delimiter.length)
+                break;
+            
+        }
+    }
+
+    return binaryToText(binaryMessage);
 }
+
+export { dctExtract }

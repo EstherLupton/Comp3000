@@ -1,5 +1,5 @@
 import { validateImageCapacity } from '../services/validation.services/image.validation.services.js';
-import { calculateImageCapacity } from '../services/validation.services/image.validation.services.js';
+import { calculateImageCapacityLsb, calculateImageCapacityDct} from '../services/validation.services/image.validation.services.js';
 
 async function uploadImage(req, res) {
     try {
@@ -55,8 +55,18 @@ async function deleteImageById(req, res) {
 async function imageCapacity(req, res) {
   try {
     const imagePath = req.file.path;
+    const embedMethod = req.body?.embedMethod || "lsb";
+    let capacityBits, capacityChars;
 
-    const { capacityBits, capacityChars } = await calculateImageCapacity(imagePath);
+    if (embedMethod === "lsb"){
+        const result = await calculateImageCapacityLsb(imagePath);
+        capacityBits = result.capacityBits;
+        capacityChars = result.capacityChars;
+    } else if (embedMethod === "dct"){
+        const result = await calculateImageCapacityDct(imagePath);
+        capacityBits = result.capacityBits;
+        capacityChars = result.capacityChars;
+    }
 
     return res.status(200).json({
       capacity: {

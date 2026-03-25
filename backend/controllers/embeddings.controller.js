@@ -1,4 +1,5 @@
 import { lsbEmbed } from '../services/embeddings.services/lsb.services.js';
+import { dctEmbed } from '../services/embeddings.services/dct.services.js';
 import fs from 'fs';
 
 async function lsbEmbedding(req, res) {
@@ -43,7 +44,30 @@ async function lsbEmbedding(req, res) {
 }
 
 async function dctEmbedding(req, res) {
-    return res.status(501).json({ message: "DCT embedding not implemented" });
+    try {
+        const storagePath = req.file?.path;
+        const hiddenData = req.body?.message;
+
+        if (!storagePath || !fs.existsSync(storagePath)) {
+            return res.status(400).json({ message: 'No valid image file provided' });
+        }
+        if (!hiddenData) {
+            return res.status(400).json({ message: 'No message provided to embed' });
+        }
+        const dctOptions = parseInt(req.body?.dctOptions) || 10;
+        const { imageEmbeddedPath, differenceMapPath } = await dctEmbed(storagePath, hiddenData, dctOptions);
+        
+        const embedNormalizedPath = imageEmbeddedPath.replace(/\\/g, "/");
+        const differenceNormalizedPath = differenceMapPath.replace(/\\/g, "/");
+        
+        return res.status(200).json({
+            steggedUrl: `http://localhost:5000/${embedNormalizedPath}`,
+            differenceUrl: `http://localhost:5000/${differenceNormalizedPath}`
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Image embedding failed" });
+    }
 }
 
 async function adaptiveEmbedding(req, res) {
