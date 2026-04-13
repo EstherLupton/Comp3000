@@ -62,6 +62,24 @@ export async function validateImageCapacity(imagePath, hiddenData) {
     return { pixels, messageBinary };
 }
 
+export async function validateImageCapacityDct(imagePath, hiddenData) {
+    const image = sharp(imagePath);
+    const pixels = await image.raw().toBuffer({ resolveWithObject: true });
+    const { width, height } = pixels.info;
+    const blocksWide = Math.floor(width / 8);
+    const blocksHigh = Math.floor(height / 8);
+    const totalBlocks = blocksWide * blocksHigh;
+    const usableBlocks = Math.floor(totalBlocks / 3);
+    const capacityBits = usableBlocks;
+    let messageBinary = messageToBinary(hiddenData);
+    messageBinary += "1111111111111110";
+    if (messageBinary.length > capacityBits) {
+        throw new Error("Message too long to embed in image");
+    }
+
+    return { pixels, messageBinary };
+}
+
 export async function calculateImageCapacityLsb(imagePath) {
     const image = sharp(imagePath);
     const pixels = await image.raw().toBuffer({ resolveWithObject: true });
