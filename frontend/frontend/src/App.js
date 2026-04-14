@@ -7,7 +7,7 @@ import { INSTRUCTIONS } from "./constants";
 import './App.css';
 
 function App() {
-  const [activeTab, setActiveTab] = React.useState("embed");
+  const [activeTab, setActiveTab] = React.useState("explanation");
   const [embedMethod, setEmbedMethod] = React.useState("lsb");
   const [lsbType, setLsbType] = React.useState("sequential");
   const [theme, setTheme] = React.useState(localStorage.getItem('theme') || 'dark');
