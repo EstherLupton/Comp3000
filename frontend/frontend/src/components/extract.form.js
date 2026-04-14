@@ -165,6 +165,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                     </div>
                 </div>
             )}
+            <div style={{height: '20px'}}></div>
 
             <button className="glow-button" onClick={handleExtract} disabled={loading || !imageFile || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Extracting..." : "Extract Message"}
