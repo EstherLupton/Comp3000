@@ -99,15 +99,15 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </div>
 
             {embedMethod === "lsb" ? (
-                <div className="lsb-sub-settings animate-slide-down">
-                    <label className="sub-label">LSB Mode</label>
-                    <div className="lsb-mode-buttons">
-                        <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
-                        <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
+                    <div>
+                        <label className="sub-label">LSB Mode</label>
+                        <div className="lsb-mode-buttons">
+                            <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
+                            <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
+                        </div>
                     </div>
-                </div>
             ) : (
-                <div className="dct-sub-settings animate-slide-down">
+                <div>
                     <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
@@ -141,7 +141,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </div>
 
             {lsbType === "random" && embedMethod === "lsb" && (
-                <div className="glass-input-group mt-3 animate-slide-down">
+                <div className="glass-input-group mt-3">
                     <label>Secret Key</label>
                     <input
                         className="form-control"
@@ -158,7 +158,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </button>
 
             {extractedMessage && (
-                <div className="stegged-result mt-4 animate-slide-down">
+                <div className="stegged-result mt-4">
                     <div className="glass-input-group">
                         <label>Extracted Message</label>
                         <div className="extracted-result-box" style={{minHeight: '100px', background: 'rgba(0,0,0,0.2)'}}>

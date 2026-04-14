@@ -161,15 +161,15 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             </button>
             </div>
             {embedMethod === "lsb" ? (
-                <div className="lsb-sub-settings animate-slide-down">
+            <div>
                 <label className="sub-label">LSB Mode</label>
                 <div className="lsb-mode-buttons">
                     <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
                     <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
                 </div>
-                </div>
+            </div>
             ) : (
-                <div className="dct-sub-settings animate-slide-down">
+                <div>
                     <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}

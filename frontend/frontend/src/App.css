@@ -300,9 +300,7 @@
     margin-bottom: 1rem;
 }
 
-.animate-slide-down {
-    animation: slideDown 0.3s ease-out;
-}
+
 
 .theme-toggle-button {
     background: transparent !important;
@@ -515,7 +513,6 @@
     border: 1px solid var(--card-border);
 }
 
-/* Subtle animation when switching data loads */
 .data-map-low, .data-map-med, .data-map-high {
     transition: all 0.5s ease;
     display: flex;
