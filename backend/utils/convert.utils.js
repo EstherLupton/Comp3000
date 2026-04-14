@@ -1,3 +1,5 @@
+import sharp from 'sharp';
+
 export function messageToBinary(message) {
     const encoder = new TextEncoder();
     const encodedMessage = encoder.encode(message);
@@ -22,3 +24,13 @@ export function binaryToText(binaryMessage) {
     const decoder = new TextDecoder();
     return decoder.decode(new Uint8Array(bytes));
 }
+
+export async function pngToJpg(pngBuffer) {
+    return await sharp(pngBuffer)
+        .jpeg({
+            quality: 100,
+            chromaSubsampling: '4:4:4'
+        })
+        .toBuffer();
+}
+
