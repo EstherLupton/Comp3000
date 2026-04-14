@@ -252,7 +252,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 </div>
             </div>
 
-            <button className="glow-button mt-4 w-100" onClick={handleSubmit} disabled={loading}>
+            <button className="glow-button" onClick={handleSubmit} disabled={loading || !imageFile || !message || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Embedding..." : "Embed Message"}
             </button>
 

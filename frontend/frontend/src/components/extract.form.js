@@ -28,7 +28,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             return;
         }
         
-        if (lsbType === "random" && !secretKey) {
+        if (lsbType === "random" && embedMethod === "lsb" && !secretKey) {
             alert("Please enter a secret key for random LSB.");
             return;
         }
@@ -166,7 +166,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                 </div>
             )}
 
-            <button className="glow-button mt-4 w-100" onClick={handleExtract} disabled={loading || !imageFile}>
+            <button className="glow-button" onClick={handleExtract} disabled={loading || !imageFile || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Extracting..." : "Extract Message"}
             </button>
 
