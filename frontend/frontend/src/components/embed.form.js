@@ -155,8 +155,8 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 
             <button 
                 className={embedMethod === "dct" ? "active" : ""} 
-                onClick={() => setEmbedMethod("dct")}
->
+                onClick={() => { setEmbedMethod("dct"); setSecretKey(""); }}    
+            >
                 DCT (Frequency)
             </button>
             </div>
@@ -201,7 +201,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 />
             </div>
 
-            {lsbType === "random" && (
+            {embedMethod === "lsb" && lsbType === "random" && (
                <div className="glass-input-group mt-3">
                 <label>Secret Key</label>
                 <div className="password-input-wrapper">
