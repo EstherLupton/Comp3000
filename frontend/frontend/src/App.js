@@ -39,6 +39,12 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme])
 
+  React.useEffect(() => {
+  setOriginalImage(null);
+  setSteggedImage(null);
+  setDifferenceMap(null);
+}, [activeTab]);
+
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
