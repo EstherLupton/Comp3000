@@ -202,17 +202,17 @@ function writeBlock(data, x, y, width, rBlock, gBlock, bBlock) {
     }
 }
 
-function writeBlockPng(data, x, y, width, rBlock, gBlock, bBlock) {
-     for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-            const index = ((y + i) * width + (x + j)) * 3;
+// function writeBlockPng(data, x, y, width, rBlock, gBlock, bBlock) {
+//      for (let i = 0; i < 8; i++) {
+//         for (let j = 0; j < 8; j++) {
+//             const index = ((y + i) * width + (x + j)) * 3;
 
-            data[index] = Math.max(0, Math.min(255, Math.round(rBlock[i][j] + 128)));
-            data[index + 1] = Math.max(0, Math.min(255, Math.round(gBlock[i][j] + 128)));
-            data[index + 2] = Math.max(0, Math.min(255, Math.round(bBlock[i][j] + 128)));
-        }
-    }
-}
+//             data[index] = Math.max(0, Math.min(255, Math.round(rBlock[i][j] + 128)));
+//             data[index + 1] = Math.max(0, Math.min(255, Math.round(gBlock[i][j] + 128)));
+//             data[index + 2] = Math.max(0, Math.min(255, Math.round(bBlock[i][j] + 128)));
+//         }
+//     }
+// }
 
 
 
@@ -268,55 +268,55 @@ async function differenceMap(originalImagePath, steggedImagePath, fileId) {
     return outputPath;
 }
 
-async function differenceMapPng(originalImagePath, steggedImagePath, fileId) {
-    const original = sharp(originalImagePath);
-    const stegged = sharp(steggedImagePath);
+// async function differenceMapPng(originalImagePath, steggedImagePath, fileId) {
+//     const original = sharp(originalImagePath);
+//     const stegged = sharp(steggedImagePath);
 
-    const [meta, buffer1, buffer2] = await Promise.all([
-        original.metadata(),
-        original.raw().toBuffer(),
-        stegged.raw().toBuffer()
-    ]);
+//     const [meta, buffer1, buffer2] = await Promise.all([
+//         original.metadata(),
+//         original.raw().toBuffer(),
+//         stegged.raw().toBuffer()
+//     ]);
 
-    const { width, height, channels } = meta;
-    const differenceData = new Uint8Array(buffer1.length);
+//     const { width, height, channels } = meta;
+//     const differenceData = new Uint8Array(buffer1.length);
 
-    const THRESHOLD = 2;
+//     const THRESHOLD = 2;
 
-    for (let i = 0; i < buffer1.length; i += channels) {
-        let maxDiff = 0;
+//     for (let i = 0; i < buffer1.length; i += channels) {
+//         let maxDiff = 0;
 
-        for (let c = 0; c < channels; c++) {
-            if (channels === 4 && c === 3) continue;
+//         for (let c = 0; c < channels; c++) {
+//             if (channels === 4 && c === 3) continue;
 
-            const diff = Math.abs(buffer1[i + c] - buffer2[i + c]);
-            if (diff > maxDiff) maxDiff = diff;
-        }
+//             const diff = Math.abs(buffer1[i + c] - buffer2[i + c]);
+//             if (diff > maxDiff) maxDiff = diff;
+//         }
 
-        if (maxDiff > THRESHOLD) {
-            const highlight = Math.min(255, 150 + (maxDiff * 5));
-            differenceData[i] = highlight;     // Red channel
-            differenceData[i + 1] = 0;         // Green
-            differenceData[i + 2] = 0;         // Blue
-        } else {
-            differenceData[i] = Math.floor(buffer1[i] * 0.15);
-            differenceData[i + 1] = Math.floor(buffer1[i + 1] * 0.15);
-            differenceData[i + 2] = Math.floor(buffer1[i + 2] * 0.15);
-        }
+//         if (maxDiff > THRESHOLD) {
+//             const highlight = Math.min(255, 150 + (maxDiff * 5));
+//             differenceData[i] = highlight;     // Red channel
+//             differenceData[i + 1] = 0;         // Green
+//             differenceData[i + 2] = 0;         // Blue
+//         } else {
+//             differenceData[i] = Math.floor(buffer1[i] * 0.15);
+//             differenceData[i + 1] = Math.floor(buffer1[i + 1] * 0.15);
+//             differenceData[i + 2] = Math.floor(buffer1[i + 2] * 0.15);
+//         }
 
-        if (channels === 4) differenceData[i + 3] = 255;
-    }
+//         if (channels === 4) differenceData[i + 3] = 255;
+//     }
 
-    const directory = 'uploads/differenceMap';
-    if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
+//     const directory = 'uploads/differenceMap';
+//     if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
 
-    const outputPath = path.join(directory, `difference_${fileId}.png`);
+//     const outputPath = path.join(directory, `difference_${fileId}.png`);
 
-    await sharp(differenceData, {
-        raw: { width, height, channels }
-    }).toFile(outputPath);
+//     await sharp(differenceData, {
+//         raw: { width, height, channels }
+//     }).toFile(outputPath);
 
-    return outputPath;
-}
+//     return outputPath;
+// }
 
 export { dctEmbed };

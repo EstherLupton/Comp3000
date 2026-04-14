@@ -2,6 +2,7 @@ import React from 'react';
 import EmbedForm from './components/embed.form';
 import ExtractForm from './components/extract.form';
 import ImageViews from "./components/image.views";
+import ExplanationContent from './components/explanation.component';
 import { INSTRUCTIONS } from "./constants";
 import './App.css';
 
@@ -15,12 +16,21 @@ function App() {
   const [differenceMap, setDifferenceMap] = React.useState(null);
 
   const getSteps = () => {
-  const mode = activeTab; 
-  if (embedMethod === 'dct') {
-    return INSTRUCTIONS[mode].dct;
-  }
-  return INSTRUCTIONS[mode].lsb[lsbType];
-};
+    const mode = activeTab; 
+    if (mode === "explanation" || !INSTRUCTIONS[mode]) {
+      return { title: "Explanation Mode", steps: ["Read the details in the center panel."] };
+    }
+
+    if (embedMethod === 'dct') {
+      return INSTRUCTIONS[mode].dct;
+    }
+
+    const modeData = INSTRUCTIONS[mode];
+    if (modeData && modeData.lsb) {
+      return modeData.lsb[lsbType];
+    }
+    return { title: "", steps: [] };
+  };
 
   const currentInfo = getSteps();
 
@@ -51,12 +61,27 @@ function App() {
               >
                 Extract
               </button>
+              <button 
+                className={activeTab === "explanation" ? "active" : ""} 
+                onClick={() => setActiveTab("explanation")}
+              >
+                Explanation
+              </button>
+
             </div>
           <button className="theme-toggle-button" onClick={toggleTheme}>
             {theme === 'dark' ? '🌞' : '🌙'}
           </button>
         </div>
       </nav>
+
+      {activeTab === "explanation" ? (
+        <div className = "explanation-full-container">
+          <div className = "glass-card explanation-container">
+            <ExplanationContent/>
+            </div>
+        </div>
+      ) : (
 
       <div className="main-container">
 
@@ -87,14 +112,29 @@ function App() {
                   setOriginalImage={setOriginalImage}
                   steggedUrl={steggedImage}
                 /> 
-              ) : (
+              ) : 
+                activeTab === "extract" ? (
                 <ExtractForm 
                   embedMethod={embedMethod} 
                   setEmbedMethod={setEmbedMethod} 
                   lsbType={lsbType} 
                   setLsbType={setLsbType} 
                 />
-              )}
+                ) :
+                activeTab === "explanation" ?
+                   (
+                    <ExplanationContent 
+                      embedMethod={null}
+                      setEmbedMethod={null}
+                      lsbType={null}
+                      setLsbType={null}
+                      setDifferenceMap={null}
+                      setSteggedUrl={null}
+                      setOriginalImage={null}
+                      steggedUrl={null}
+                    />                   
+              ) : null
+              }
             </div>
           </div>
         </main>
@@ -110,6 +150,7 @@ function App() {
           </div>
         </aside>
       </div>
+      )}
     </div>
   );
 }
