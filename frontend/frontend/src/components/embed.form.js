@@ -141,6 +141,13 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 
     };
 
+    const handleTextareaChange = (e) => {
+    setMessage(e.target.value);
+
+    e.target.style.height = 'inherit';
+    e.target.style.height = `${e.target.scrollHeight}px`
+    };
+
     return (
         <div className="embed-form">
 
@@ -225,16 +232,17 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 </div>
             )}
 
-            <div className="glass-input-group mt-3">
+            <div className="glass-input-group">
                 <label>Secret Message</label>
                 <div className="textarea-wrapper">
                     <textarea
                         className="form-control custom-textarea"
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={handleTextareaChange}
                         placeholder="What's the secret?"
                         maxLength={remainingCapacity || undefined}
                         rows="4"
+                        style={{resize: 'none', overflow: 'hidden', minHeight: '100px'}}
                     />
                     {remainingCapacity !== null && (
                         <span className="capacity-indicator-text">

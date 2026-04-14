@@ -174,7 +174,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                 <div className="stegged-result mt-4">
                     <div className="glass-input-group">
                         <label>Extracted Message</label>
-                        <div className="extracted-result-box" style={{minHeight: '100px', background: 'rgba(0,0,0,0.2)'}}>
+                        <div className="extracted-result-box" >
                             {extractedMessage}
                         </div>
                     </div>
