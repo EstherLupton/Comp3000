@@ -9,6 +9,8 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     const [secretKey, setSecretKey] = React.useState("");
     const [progress, setProgress] = React.useState(0);
     const [dctOptions, setDctOptions] = React.useState(80);
+    const [showPassword, setShowPassword] = React.useState(false);
+    
 
     const onImageUpload = (e) => {
         const file = e.target ? e.target.files[0] : e;
@@ -143,13 +145,24 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             {lsbType === "random" && embedMethod === "lsb" && (
                 <div className="glass-input-group mt-3">
                     <label>Secret Key</label>
-                    <input
-                        className="form-control"
-                        type="password"
-                        value={secretKey}
-                        onChange={(e) => setSecretKey(e.target.value)}
-                        placeholder="Enter the key used to hide the message"
-                    />
+                    <div className="password-input-wrapper">
+                        <div className="input-with-icon">
+                            <input
+                                className="form-control"
+                                type={showPassword ? "text" : "password"}
+                                value={secretKey}
+                                onChange={(e) => setSecretKey(e.target.value)}
+                                placeholder="Enter the key used to hide the message"
+                            />
+                            <button 
+                                    type="button"
+                                    className={`eye-toggle-btn ${showPassword ? 'active' : ''}`}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}>
+                                        👁
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
