@@ -1,0 +1,33 @@
+/* Glass look for cards and panels */
+
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-top-color: var(--card-reflection);
+    border-radius: var(--border-radius-xl);
+    padding: 1.5rem;
+    box-shadow: 0 20px 50px var(--shadow-main);
+    transition: all 0.3s ease;
+}
+ 
+/* Inline how-it-works step list */
+.method-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    flex-direction: column;
+}
+ 
+.method-steps span {
+    font-weight: 800;
+    color: var(--accent-blue);
+    font-size: 0.7rem;
+    margin-top: 3px;
+}
+ 
+ 

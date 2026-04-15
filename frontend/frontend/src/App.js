@@ -54,7 +54,7 @@ function App() {
       <nav className="navbar">
         <div className="hidden-pixels-logo">HiddenPixels</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="embed-extract-buttons">
+            <div className="button">
               <button 
                 className={activeTab === "embed" ? "active" : ""} 
                 onClick={() => setActiveTab("embed")}
@@ -91,10 +91,10 @@ function App() {
 
       <div className="main-container">
 
-        <aside className="side-column-instructions">
-          <div className="column-label">HOW IT WORKS</div>
+        <aside className="glass-card">
+          <div className="label">HOW IT WORKS</div>
           <div key={JSON.stringify(currentInfo)} className="fade-in">
-            <h3 style={{fontSize: '1rem', marginBottom: '10px'}}>{currentInfo.title}</h3>
+            <label className="sub-label">{currentInfo.title}</label>
             <ul className="method-steps">
               {currentInfo.steps.map((step, i) => (
                 <li key={i}>{step}</li>
@@ -145,8 +145,8 @@ function App() {
           </div>
         </main>
 
-        <aside className="side-column-preview-card">
-          <div className="column-label">Image Data Map</div>
+        <aside className="glass-card">
+          <div className="label">Image Data Map</div>
           <div className="preview-container">
             <ImageViews
               original={originalImage}

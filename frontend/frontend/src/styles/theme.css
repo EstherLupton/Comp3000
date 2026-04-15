@@ -1,0 +1,70 @@
+/* Themes for light and dark mode */
+
+:root {
+    --bg-main: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-blue: #3b82f6;
+    --accent-hover: #2563eb;
+    --card-bg: rgba(30, 41, 59, 0.5);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-reflection: rgba(255, 255, 255, 0.15);
+    --input-bg: #0f172a99;
+    --input-focus-bg: rgba(15, 23, 42, 0.8);
+    --shadow-main: rgba(0, 0, 0, 0.3);
+    --dropzone-hover: rgba(59, 130, 246, 0.05);
+    --button-group-bg: rgba(255, 255, 255, 0.05);
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-xl: 20px;
+}
+ 
+[data-theme='light'] {
+    --bg-main: radial-gradient(circle at top, #f8fafc 0%, #e2e8f0 100%);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent-blue: #2563eb;
+    --accent-hover: #1d4ed8;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(0, 0, 0, 0.1);
+    --card-reflection: rgba(255, 255, 255, 0.5);
+    --input-bg: #ffffff;
+    --input-focus-bg: #fdfdfd;
+    --shadow-main: rgba(0, 0, 0, 0.08);
+    --dropzone-hover: rgba(37, 99, 235, 0.03);
+    --button-group-bg: rgba(0, 0, 0, 0.05);
+}
+
+.label {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-blue);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+ 
+/* Subtle secondary label */
+.sub-label {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 0.7px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    padding-top: 10px;
+}
+ 
+.capacity-indicator-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.explanation-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}

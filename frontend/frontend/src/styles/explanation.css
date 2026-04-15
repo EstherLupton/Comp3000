@@ -1,0 +1,18 @@
+/* Explanation page styles for the application */
+
+.explanation-container {
+    width: 100%;
+    max-width: 100%;
+    min-height: 600px;
+    padding: 40px;
+    box-sizing: border-box;
+}
+ 
+.explanation-content-wrapper {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+ 

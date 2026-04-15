@@ -85,9 +85,7 @@ One bit of the secret message gets put into each of the 8 by 8 blocks... `
   const currentSet = exampleImages[algorithm][dataLoad];
 
   return (
-    <div className="explanation-content-wrapper">
-      <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'flex-start' }}>
-        
+    <div className="explanation-content-wrapper">        
         {/* LEFT SIDEBAR: The Glass Box around Options */}
         <aside className="glass-card" style={{ 
           width: '280px', 
@@ -98,8 +96,8 @@ One bit of the secret message gets put into each of the 8 by 8 blocks... `
           flexShrink: 0
         }}>
           <div>
-            <div className="column-label" style={{ marginBottom: '12px' }}>Algorithm</div>
-            <div className="lsb-mode-buttons" style={{ flexDirection: 'column', width: '100%' }}>
+            <div className="label" style={{ marginBottom: '12px' }}>Algorithm</div>
+            <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
               <button 
                 className={algorithm === 'lsbSequential' ? "active" : ""} 
                 style={{ width: '100%', textAlign: 'left' }}
@@ -125,19 +123,19 @@ One bit of the secret message gets put into each of the 8 by 8 blocks... `
           </div>
 
           <div>
-            <div className="column-label" style={{ marginBottom: '12px' }}>Data Volume</div>
-            <div className="lsb-mode-buttons" style={{ flexDirection: 'column', width: '100%' }}>
+            <div className="label" style={{ marginBottom: '12px' }}>Data Volume</div>
+            <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
               <button className={dataLoad === 'low' ? "active" : ""} onClick={() => setDataLoad('low')}>Low Load</button>
               <button className={dataLoad === 'med' ? "active" : ""} onClick={() => setDataLoad('med')}>Medium Load</button>
               <button className={dataLoad === 'high' ? "active" : ""} onClick={() => setDataLoad('high')}>High Load</button>
             </div>
           </div>
 
-          <div className="method-settings-glass" style={{ margin: 0, padding: '12px', textAlign: 'center' }}>
-             <span className="sub-label" style={{ padding: 0, fontWeight: '700' }}>
-               Payload: {payloadText[dataLoad]}
+            <div style={{alignItems: 'center'}}>
+             <span className="label" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', fontSize: '0.9rem' }}>
+               {payloadText[dataLoad]}
              </span>
-          </div>
+            </div>
         </aside>
 
         {/* RIGHT SIDE: Visual Data View */}
@@ -145,36 +143,36 @@ One bit of the secret message gets put into each of the 8 by 8 blocks... `
           <div className="preview-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
             
             <div className="preview-column">
-              <span className="sub-label">Original Image</span>
+              <span className="label">Original Image</span>
               <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
                 <img src={currentSet.original} alt="Original Image" style={{ width: '100%', height: '100%' }} />
               </div>
             </div>
             
             <div className="preview-column">
-              <span className="sub-label">Data Map</span>
+              <span className="label">Data Map</span>
               <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
                 <img src={currentSet.dataMap} alt="Data Map" style={{ width: '100%', height: '100%' }} />
               </div>
             </div>
 
             <div className="preview-column">
-              <span className="sub-label">Stegged Result</span>
+              <span className="label">Stegged Result</span>
               <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
                 <img src={currentSet.stegged} alt="Stegged Result" style={{ width: '100%', height: '100%' }} />
               </div>
             </div>
           </div>
+          <div style={{ height: '1.5rem' }}></div>
 
-          <div className="tech-box" style={{ marginTop: '2.5rem', borderLeftColor: 'var(--accent-blue)' }}>
-            <h4 style={{ color: 'var(--accent-blue)', marginBottom: '8px', fontSize: '0.9rem' }}>Explanation</h4>
-            <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
+          <div className="glass-card" >
+            <label >Explanation</label>
+            <p className="explanation-text">
               {algorithmText[algorithm]}
             </p>
           </div>
         </main>
       </div>
-    </div>
   );
 };
 
