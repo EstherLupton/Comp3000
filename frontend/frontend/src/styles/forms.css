@@ -1,0 +1,97 @@
+/* Form styles for the application */
+
+/* ── Text inputs & textarea ── */
+.placeholder-input,
+.input-box input {
+    background: var(--input-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--border-radius-md) !important;
+    padding: 12px !important;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+ 
+.placeholder-input:focus,
+.input-box input:focus {
+    border-color: var(--accent-blue) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+    background: var(--input-focus-bg) !important;
+}
+ 
+.placeholder-input::placeholder,
+.input-box input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+ 
+/* ── Icon-inset input wrapper (used for password field) ── */
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+ 
+.input-with-icon input {
+    width: 100%;
+    padding-right: 40px;
+}
+ 
+/* ── Drag-and-drop file zone ── */
+.file-drop-area {
+    border: 2px dashed var(--card-border);
+    background: var(--button-group-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+ 
+.file-drop-area.has-file {
+    border-style: solid;
+    border-color: var(--accent-blue);
+    background: var(--dropzone-hover);
+}
+ 
+.file-drop-area.dragging {
+    border-color: var(--accent-blue);
+    background: var(--accent-blue);
+    opacity: 0.1;
+}
+ 
+.file-drop-area p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* ── Read-only result boxes ── */
+.extracted-result-box {
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    box-sizing: border-box;
+    color: var(--text-primary);
+    min-height: 100px;
+    white-space: pre-wrap;
+}
+ 
+.secret-message-preview {
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    max-height: 150px;
+    overflow-y: auto;
+}
+

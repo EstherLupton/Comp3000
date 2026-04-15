@@ -3,7 +3,7 @@ function ImageViews({ original, stegged, difference }) {
     <div className="preview-grid">
 
       <div className="preview-column">
-        <div className="column-label">Image Data Map</div>
+        <div className="sub-label">Image Data Map</div>
 
         {difference ? (
           <img src={difference} alt="Difference Map" className="preview-image" />
@@ -16,7 +16,7 @@ function ImageViews({ original, stegged, difference }) {
       </div>
 
       <div className="preview-column">
-        <div className="column-label">Original Image</div>
+        <div className="sub-label">Original Image</div>
 
         {original ? (
           <img src={original} alt="Original" className="preview-image" />
@@ -29,7 +29,7 @@ function ImageViews({ original, stegged, difference }) {
       </div>
 
       <div className="preview-column">
-        <div className="column-label">Stegged Image</div>
+        <div className="sub-label">Stegged Image</div>
 
         {stegged ? (
           <img src={stegged} alt="Stegged" className="preview-image" />

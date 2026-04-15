@@ -84,8 +84,8 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     return (
         <div className="extract-form">
 
-            <div className="method-selector-label">Extraction Method</div>
-            <div className="embed-extract-buttons">
+            <div className="label">Extraction Method</div>
+            <div className="button">
                 <button 
                     className={embedMethod === "lsb" ? "active" : ""} 
                     onClick={() => setEmbedMethod("lsb")}
@@ -103,17 +103,17 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             {embedMethod === "lsb" ? (
                     <div>
                         <label className="sub-label">LSB Mode</label>
-                        <div className="lsb-mode-buttons">
+                        <div className="button">
                             <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
                             <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
                         </div>
                     </div>
             ) : (
                 <div>
-                    <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
+                    <p className="label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
-
+            <div style={{height: '20px'}}></div>
             <div 
                 className={`file-drop-area ${isDragging ? "dragging" : ""} ${previewUrl ? "has-file" : ""}`} 
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }} 
@@ -129,7 +129,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                 ) : (
                 
                     <>
-                        <div style={{fontSize: '1.5rem', marginBottom: '8px'}}>🔍</div>
+                        <div style={{fontSize: '1.5rem', marginBottom: '8px'}}>📁</div>
                         <p>Drop image to extract or <span>browse</span></p>
                     </>
                 )}
@@ -143,7 +143,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </div>
 
             {lsbType === "random" && embedMethod === "lsb" && (
-                <div className="glass-input-group mt-3">
+                <div className="input-box">
                     <label>Secret Key</label>
                     <div className="password-input-wrapper">
                         <div className="input-with-icon">
@@ -156,7 +156,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
                             />
                             <button 
                                     type="button"
-                                    className={`eye-toggle-btn ${showPassword ? 'active' : ''}`}
+                                    className={`eye-toggle-button ${showPassword ? 'active' : ''}`}
                                     onClick={() => setShowPassword(!showPassword)}
                                     aria-label={showPassword ? "Hide password" : "Show password"}>
                                         👁
@@ -167,13 +167,13 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             )}
             <div style={{height: '20px'}}></div>
 
-            <button className="glow-button" onClick={handleExtract} disabled={loading || !imageFile || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
+            <button className="submit-button" onClick={handleExtract} disabled={loading || !imageFile || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Extracting..." : "Extract Message"}
             </button>
 
             {extractedMessage && (
                 <div className="stegged-result mt-4">
-                    <div className="glass-input-group">
+                    <div className="input-box">
                         <label>Extracted Message</label>
                         <div className="extracted-result-box" >
                             {extractedMessage}

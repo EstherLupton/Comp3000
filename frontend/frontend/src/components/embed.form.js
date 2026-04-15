@@ -151,8 +151,8 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     return (
         <div className="embed-form">
 
-            <div className="method-selector-label">Embedding Method</div>
-            <div className="embed-extract-buttons">
+            <div className="label">Embedding Method</div>
+            <div className="button">
             <button 
                 className={embedMethod === "lsb" ? "active" : ""} 
                 onClick={() => setEmbedMethod("lsb")}
@@ -170,17 +170,17 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             {embedMethod === "lsb" ? (
             <div>
                 <label className="sub-label">LSB Mode</label>
-                <div className="lsb-mode-buttons">
+                <div className="button">
                     <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
                     <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
                 </div>
             </div>
             ) : (
                 <div>
-                    <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
+                    <p className="label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
-
+            <div style={{height: '20px'}}></div>
             <div 
                 className={`file-drop-area ${isDragging ? "dragging" : ""} ${previewUrl ? "has-file" : ""}`} 
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }} 
@@ -190,7 +190,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             >
                 {previewUrl ? (
                     <div className="upload-preview">
-                        <img src={previewUrl} alt="Preview" style={{maxHeight: '120px', borderRadius: '8px'}} />
+                        <img src={previewUrl} alt="Preview" style={{maxHeight: '160px', borderRadius: '8px'}} />
                         <p style={{marginTop: '10px', fontSize: '0.8rem'}}>Change Image</p>
                     </div>
                 ) : (
@@ -209,8 +209,8 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             </div>
 
             {embedMethod === "lsb" && lsbType === "random" && (
-               <div className="glass-input-group mt-3">
-                <label>Secret Key</label>
+               <div className="input-box">
+                <label className="sub-label">Secret Key</label>
                 <div className="password-input-wrapper">
                     <div className="input-with-icon">
                         <input
@@ -222,7 +222,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                         />
                         <button 
                             type="button"
-                            className={`eye-toggle-btn ${showPassword ? 'active' : ''}`}
+                            className={`eye-toggle-button ${showPassword ? 'active' : ''}`}
                             onClick={() => setShowPassword(!showPassword)}
                             aria-label={showPassword ? "Hide password" : "Show password"}>
                                 👁
@@ -231,12 +231,13 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 </div>
 </div>
             )}
+            <div style={{height: '20px'}}></div>
 
-            <div className="glass-input-group">
-                <label>Secret Message</label>
+            <div className="input-box">
+                <label className="sub-label">Secret Message</label>
                 <div className="textarea-wrapper">
                     <textarea
-                        className="form-control custom-textarea"
+                        className="placeholder-input"
                         value={message}
                         onChange={handleTextareaChange}
                         placeholder="What's the secret?"
@@ -253,16 +254,14 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             </div>
             <div style={{height: '20px'}}></div>
 
-            <button className="glow-button" onClick={handleSubmit} disabled={loading || !imageFile || !message || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
+            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Embedding..." : "Embed Message"}
             </button>
-
+            <div style={{height: '20px'}}></div>
             {steggedUrl && (
-                <div className="stegged-result mt-4">
-                    <button className="btn btn-success w-100 mb-3" onClick={handleDownload}>
+                    <button className="download-button" onClick={handleDownload}>
                         Download Stegged Image
                     </button>
-                </div>
             )}
         </div>
     );
