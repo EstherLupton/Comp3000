@@ -9,6 +9,8 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     const [secretKey, setSecretKey] = React.useState("");
     const [progress, setProgress] = React.useState(0);
     const [dctOptions, setDctOptions] = React.useState(80);
+    const [showPassword, setShowPassword] = React.useState(false);
+    
 
     const onImageUpload = (e) => {
         const file = e.target ? e.target.files[0] : e;
@@ -26,7 +28,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             return;
         }
         
-        if (lsbType === "random" && !secretKey) {
+        if (lsbType === "random" && embedMethod === "lsb" && !secretKey) {
             alert("Please enter a secret key for random LSB.");
             return;
         }
@@ -99,15 +101,15 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </div>
 
             {embedMethod === "lsb" ? (
-                <div className="lsb-sub-settings animate-slide-down">
-                    <label className="sub-label">LSB Mode</label>
-                    <div className="lsb-mode-buttons">
-                        <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
-                        <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
+                    <div>
+                        <label className="sub-label">LSB Mode</label>
+                        <div className="lsb-mode-buttons">
+                            <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
+                            <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
+                        </div>
                     </div>
-                </div>
             ) : (
-                <div className="dct-sub-settings animate-slide-down">
+                <div>
                     <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
@@ -141,27 +143,39 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </div>
 
             {lsbType === "random" && embedMethod === "lsb" && (
-                <div className="glass-input-group mt-3 animate-slide-down">
+                <div className="glass-input-group mt-3">
                     <label>Secret Key</label>
-                    <input
-                        className="form-control"
-                        type="password"
-                        value={secretKey}
-                        onChange={(e) => setSecretKey(e.target.value)}
-                        placeholder="Enter the key used to hide the message"
-                    />
+                    <div className="password-input-wrapper">
+                        <div className="input-with-icon">
+                            <input
+                                className="form-control"
+                                type={showPassword ? "text" : "password"}
+                                value={secretKey}
+                                onChange={(e) => setSecretKey(e.target.value)}
+                                placeholder="Enter the key used to hide the message"
+                            />
+                            <button 
+                                    type="button"
+                                    className={`eye-toggle-btn ${showPassword ? 'active' : ''}`}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}>
+                                        👁
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
+            <div style={{height: '20px'}}></div>
 
-            <button className="glow-button mt-4 w-100" onClick={handleExtract} disabled={loading || !imageFile}>
+            <button className="glow-button" onClick={handleExtract} disabled={loading || !imageFile || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Extracting..." : "Extract Message"}
             </button>
 
             {extractedMessage && (
-                <div className="stegged-result mt-4 animate-slide-down">
+                <div className="stegged-result mt-4">
                     <div className="glass-input-group">
                         <label>Extracted Message</label>
-                        <div className="extracted-result-box" style={{minHeight: '100px', background: 'rgba(0,0,0,0.2)'}}>
+                        <div className="extracted-result-box" >
                             {extractedMessage}
                         </div>
                     </div>

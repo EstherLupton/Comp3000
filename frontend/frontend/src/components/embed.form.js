@@ -141,6 +141,13 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 
     };
 
+    const handleTextareaChange = (e) => {
+    setMessage(e.target.value);
+
+    e.target.style.height = 'inherit';
+    e.target.style.height = `${e.target.scrollHeight}px`
+    };
+
     return (
         <div className="embed-form">
 
@@ -155,21 +162,21 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 
             <button 
                 className={embedMethod === "dct" ? "active" : ""} 
-                onClick={() => setEmbedMethod("dct")}
->
+                onClick={() => { setEmbedMethod("dct"); setSecretKey(""); }}    
+            >
                 DCT (Frequency)
             </button>
             </div>
             {embedMethod === "lsb" ? (
-                <div className="lsb-sub-settings animate-slide-down">
+            <div>
                 <label className="sub-label">LSB Mode</label>
                 <div className="lsb-mode-buttons">
                     <button className={lsbType === "sequential" ? "active" : ""} onClick={() => setLsbType("sequential")}>Sequential</button>
                     <button className={lsbType === "random" ? "active" : ""} onClick={() => setLsbType("random")}>Random</button>
                 </div>
-                </div>
+            </div>
             ) : (
-                <div className="dct-sub-settings animate-slide-down">
+                <div>
                     <p className="sub-label" style={{margin: 0, opacity: 0.7}}></p>
                 </div>
             )}
@@ -201,7 +208,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 />
             </div>
 
-            {lsbType === "random" && (
+            {embedMethod === "lsb" && lsbType === "random" && (
                <div className="glass-input-group mt-3">
                 <label>Secret Key</label>
                 <div className="password-input-wrapper">
@@ -225,16 +232,17 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 </div>
             )}
 
-            <div className="glass-input-group mt-3">
+            <div className="glass-input-group">
                 <label>Secret Message</label>
                 <div className="textarea-wrapper">
                     <textarea
                         className="form-control custom-textarea"
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={handleTextareaChange}
                         placeholder="What's the secret?"
                         maxLength={remainingCapacity || undefined}
                         rows="4"
+                        style={{resize: 'none', overflow: 'hidden', minHeight: '100px'}}
                     />
                     {remainingCapacity !== null && (
                         <span className="capacity-indicator-text">
@@ -243,8 +251,9 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                     )}
                 </div>
             </div>
+            <div style={{height: '20px'}}></div>
 
-            <button className="glow-button mt-4 w-100" onClick={handleSubmit} disabled={loading}>
+            <button className="glow-button" onClick={handleSubmit} disabled={loading || !imageFile || !message || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Embedding..." : "Embed Message"}
             </button>
 

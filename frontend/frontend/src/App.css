@@ -200,6 +200,7 @@
     transition: all 0.3s ease !important;
     width: 100%;
     box-sizing: border-box;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
 .custom-textarea:focus, .glass-input-group input:focus {
@@ -253,11 +254,23 @@
     border-radius: 12px;
     padding: 1rem;
     width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-all;
     box-sizing: border-box; 
-    word-wrap: break-word;
     color: var(--text-primary);
     min-height: 100px;
     white-space: pre-wrap;
+}
+
+.secret-message-preview {
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    max-height: 150px;
+    overflow-y: auto;
 }
 
 .capacity-indicator-text {
@@ -300,9 +313,7 @@
     margin-bottom: 1rem;
 }
 
-.animate-slide-down {
-    animation: slideDown 0.3s ease-out;
-}
+
 
 .theme-toggle-button {
     background: transparent !important;
@@ -515,7 +526,6 @@
     border: 1px solid var(--card-border);
 }
 
-/* Subtle animation when switching data loads */
 .data-map-low, .data-map-med, .data-map-high {
     transition: all 0.5s ease;
     display: flex;
