@@ -1,15 +1,21 @@
 import sharp from 'sharp';
 import { messageToBinary } from '../../utils/convert.utils.js'
 
-export async function validateImage(fileBuffer, fileName) {
+export async function validateImage(fileBuffer, fileName, mimeType) {
     if (!fileBuffer || !fileName || fileBuffer.length === 0) {
         throw new Error('Image not found');
     }
 
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'bmp'];
-    const fileExtension = fileName.split('.').pop().toLowerCase();
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/bmp'];
+    const fileExtension = fileName.split('.').pop().toLowerCase();    
+
     if (!allowedExtensions.includes(fileExtension)) {
         throw new Error('Unsupported image format');
+    }
+
+    if (!allowedMimeTypes.includes(mimeType)) {
+        throw new Error('Invalid file type. Only JPEG, PNG, and BMP are allowed.');
     }
 
     let metadata;
@@ -36,7 +42,7 @@ export async function validateImage(fileBuffer, fileName) {
     const expectedUncompressedSize = metadata.width * metadata.height * (metadata.channels || 3);
     const { data: rawBuffer } = await image.raw().toBuffer({ resolveWithObject: true });
     if (rawBuffer.length !== expectedUncompressedSize) {
-    throw new Error('Image uncompressed size is inconsistent with metadata');
+        throw new Error('Image uncompressed size is inconsistent with metadata');
     }
 
     return { success: true };

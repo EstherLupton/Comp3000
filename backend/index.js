@@ -21,6 +21,7 @@ app.post('/adaptive', uploadSteggedImage.single('image'), embeddingsController.a
 
 app.post('/capacity', uploadSteggedImage.single('image'), imageController.imageCapacity);
 app.post('/validate-capacity', uploadSteggedImage.single('image'), imageController.validateCapacity);
+app.post('/validate-image', uploadSteggedImage.single('image'), imageController.validateImageUpload);
 
 
 app.post('/extract/lsb', uploadAnalysis.single('image'), analysisController.lsbAnalyses);

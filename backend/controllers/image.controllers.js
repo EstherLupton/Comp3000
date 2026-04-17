@@ -1,5 +1,6 @@
 import { validateImageCapacity } from '../services/validation.services/image.validation.services.js';
-import { calculateImageCapacityLsb, calculateImageCapacityDct} from '../services/validation.services/image.validation.services.js';
+import { calculateImageCapacityLsb, calculateImageCapacityDct, validateImage } from '../services/validation.services/image.validation.services.js';
+import fs from 'fs/promises';
 
 async function uploadImage(req, res) {
     try {
@@ -94,10 +95,32 @@ async function validateCapacity(req, res) {
   }
 }
 
+async function validateImageUpload(req, res) {
+    try {
+        if (!req.file) {
+            console.error('No file uploaded');
+            return res.status(400).json({ message: 'No image file uploaded' });
+        }
+
+        console.log(`File uploaded: ${req.file.path}, MIME type: ${req.file.mimetype}`);
+
+        const fileBuffer = await fs.readFile(req.file.path);
+        console.log(`File buffer size: ${fileBuffer.length} bytes`);
+
+        await validateImage(fileBuffer, req.file.originalname, req.file.mimetype);
+
+        return res.status(200).json({ message: 'Image upload is valid.' });
+    } catch (error) {
+        console.error('Validation error:', error.message);
+        return res.status(400).json({ message: error.message });
+    }
+}
+
 export default {
     uploadImage,
     getImageById,
     deleteImageById,
     imageCapacity,
-    validateCapacity
+    validateCapacity,
+    validateImageUpload
 }
