@@ -90,53 +90,49 @@ One bit of the secret message gets put into each of the 8 by 8 blocks... `
           {/* LEFT SIDEBAR: The Glass Box around Options */}
           <aside className='explanation-sidebar'>
             <aside className="glass-card" style={{ 
-              width: '100%', 
               padding: '1.5rem', 
               display: 'flex', 
-              flexDirection: 'row', 
               gap: '2rem',
               flexShrink: 0,
               justifyContent: 'space-around'
             }}>
               <div>
-                <div className="config-section">
-                  <div className="label" style={{ marginBottom: '12px' }}>Algorithm</div>
-                    <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
-                      <button 
-                        className={algorithm === 'lsbSequential' ? "active" : ""} 
-                        style={{ width: '100%', textAlign: 'left' }}
-                        onClick={() => setAlgorithm('lsbSequential')}
-                      >
-                        LSB Sequential
-                      </button>
-                      <button 
-                        className={algorithm === 'lsbRandom' ? "active" : ""} 
-                        style={{ width: '100%', textAlign: 'left' }}
-                        onClick={() => setAlgorithm('lsbRandom')}
-                      >
-                        LSB Random
-                      </button>
-                      <button 
-                        className={algorithm === 'dct' ? "active" : ""} 
-                        style={{ width: '100%', textAlign: 'left' }}
-                        onClick={() => setAlgorithm('dct')}
-                      >
-                      DCT (Frequency)
-                      </button>
-                  </div>
+                <div className="label" style={{ marginBottom: '12px' }}>Algorithm</div>
+                  <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
+                    <button 
+                      className={algorithm === 'lsbSequential' ? "active" : ""} 
+                      style={{ width: '100%', textAlign: 'left' }}
+                      onClick={() => setAlgorithm('lsbSequential')}
+                    >
+                      LSB Sequential
+                    </button>
+                    <button 
+                      className={algorithm === 'lsbRandom' ? "active" : ""} 
+                      style={{ width: '100%', textAlign: 'left' }}
+                      onClick={() => setAlgorithm('lsbRandom')}
+                    >
+                      LSB Random
+                    </button>
+                    <button 
+                      className={algorithm === 'dct' ? "active" : ""} 
+                      style={{ width: '100%', textAlign: 'left' }}
+                      onClick={() => setAlgorithm('dct')}
+                    >
+                    DCT (Frequency)
+                    </button>
                 </div>
+
               </div>
 
               <div>
-                <div className="config-section">
-                  <div className="label" style={{ marginBottom: '12px' }}>Data Volume</div>
-                    <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
-                      <button className={dataLoad === 'low' ? "active" : ""} onClick={() => setDataLoad('low')}>Low Load</button>
-                      <button className={dataLoad === 'med' ? "active" : ""} onClick={() => setDataLoad('med')}>Medium Load</button>
-                      <button className={dataLoad === 'high' ? "active" : ""} onClick={() => setDataLoad('high')}>High Load</button>
-                    </div>
+                <div className="label" style={{ marginBottom: '12px' }}>Data Volume</div>
+                  <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
+                    <button className={dataLoad === 'low' ? "active" : ""} onClick={() => setDataLoad('low')}>Low Load</button>
+                    <button className={dataLoad === 'med' ? "active" : ""} onClick={() => setDataLoad('med')}>Medium Load</button>
+                    <button className={dataLoad === 'high' ? "active" : ""} onClick={() => setDataLoad('high')}>High Load</button>
                   </div>
                 </div>
+
 
                 <div style={{alignItems: 'center'}}>
                 <span className="label" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', fontSize: '0.9rem' }}>

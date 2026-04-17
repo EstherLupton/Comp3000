@@ -1,57 +1,46 @@
-/* Explanation page styles for the application */
-
-.explanation-container {
-    width: 100%;
-    max-width: 1600px;
-    min-height: 600px;
-    padding: 40px;
-    box-sizing: border-box;
-}
- 
+/* --- FULL SCREEN DEFAULTS --- */
 .explanation-content-wrapper {
     display: flex;
+    flex-direction: row; /* Sidebar next to content */
     gap: 2.5rem;
     align-items: flex-start;
-    color: var(--text-primary);
-    line-height: 1.6;
-    flex-direction: row;
 }
 
+.explanation-sidebar {
+    flex: 0 0 280px; /* Sidebar stays 280px wide on desktop */
+}
+
+/* Inside the Sidebar Card: Stack them vertically on desktop */
 .explanation-sidebar .glass-card {
     display: flex;
-    flex-direction: row;
+    flex-direction: column; 
     gap: 2rem;
-    align-items: flex-start;
-    width: 100%;
-}
-
-.config-section {
-    flex: 1; 
-    display: flex;
-    flex-direction: column;
+    padding: 1.5rem;
 }
 
 .explanation-main-content {
-    flex: 1; 
+    flex: 1; /* Main content takes up the rest of the space */
 }
 
-.image-preview-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
- 
+/* --- HALF SCREEN / MOBILE (Responsive) --- */
 @media (max-width: 1200px) {
     .explanation-content-wrapper {
-        flex-direction: column;
+        flex-direction: column; /* Stack sidebar ON TOP of content */
         align-items: stretch;
-        gap: 2rem;
     }
 
-    explanation-sidebar .glass-card {
-        flex-direction: row;
+    .explanation-sidebar {
+        flex: none;
+        width: 100%; /* Sidebar takes full width when at the top */
     }
 
+    /* Here is the magic: Change the inner buttons to side-by-side only when stacked */
+    .explanation-sidebar .glass-card {
+        flex-direction: row; 
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+    
     .explanation-container {
         padding: 1.5rem;
     }
