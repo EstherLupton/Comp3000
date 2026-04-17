@@ -2,7 +2,7 @@
 
 .explanation-container {
     width: 100%;
-    max-width: 100%;
+    max-width: 1600px;
     min-height: 600px;
     padding: 40px;
     box-sizing: border-box;
@@ -14,5 +14,45 @@
     align-items: flex-start;
     color: var(--text-primary);
     line-height: 1.6;
+    flex-direction: row;
+}
+
+.explanation-sidebar .glass-card {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.config-section {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+}
+
+.explanation-main-content {
+    flex: 1; 
+}
+
+.image-preview-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
  
+@media (max-width: 1200px) {
+    .explanation-content-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2rem;
+    }
+
+    explanation-sidebar .glass-card {
+        flex-direction: row;
+    }
+
+    .explanation-container {
+        padding: 1.5rem;
+    }
+}

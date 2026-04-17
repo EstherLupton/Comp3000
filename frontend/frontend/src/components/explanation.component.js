@@ -85,94 +85,103 @@ One bit of the secret message gets put into each of the 8 by 8 blocks... `
   const currentSet = exampleImages[algorithm][dataLoad];
 
   return (
-    <div className="explanation-content-wrapper">        
-        {/* LEFT SIDEBAR: The Glass Box around Options */}
-        <aside className="glass-card" style={{ 
-          width: '280px', 
-          padding: '1.5rem', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '2rem',
-          flexShrink: 0
-        }}>
-          <div>
-            <div className="label" style={{ marginBottom: '12px' }}>Algorithm</div>
-            <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
-              <button 
-                className={algorithm === 'lsbSequential' ? "active" : ""} 
-                style={{ width: '100%', textAlign: 'left' }}
-                onClick={() => setAlgorithm('lsbSequential')}
-              >
-                LSB Sequential
-              </button>
-              <button 
-                className={algorithm === 'lsbRandom' ? "active" : ""} 
-                style={{ width: '100%', textAlign: 'left' }}
-                onClick={() => setAlgorithm('lsbRandom')}
-              >
-                LSB Random
-              </button>
-              <button 
-                className={algorithm === 'dct' ? "active" : ""} 
-                style={{ width: '100%', textAlign: 'left' }}
-                onClick={() => setAlgorithm('dct')}
-              >
-                DCT (Frequency)
-              </button>
-            </div>
-          </div>
+    <div className="explanation-container">
+      <div className="explanation-content-wrapper">        
+          {/* LEFT SIDEBAR: The Glass Box around Options */}
+          <aside className='explanation-sidebar'>
+            <aside className="glass-card" style={{ 
+              width: '100%', 
+              padding: '1.5rem', 
+              display: 'flex', 
+              flexDirection: 'row', 
+              gap: '2rem',
+              flexShrink: 0,
+              justifyContent: 'space-around'
+            }}>
+              <div>
+                <div className="config-section">
+                  <div className="label" style={{ marginBottom: '12px' }}>Algorithm</div>
+                    <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
+                      <button 
+                        className={algorithm === 'lsbSequential' ? "active" : ""} 
+                        style={{ width: '100%', textAlign: 'left' }}
+                        onClick={() => setAlgorithm('lsbSequential')}
+                      >
+                        LSB Sequential
+                      </button>
+                      <button 
+                        className={algorithm === 'lsbRandom' ? "active" : ""} 
+                        style={{ width: '100%', textAlign: 'left' }}
+                        onClick={() => setAlgorithm('lsbRandom')}
+                      >
+                        LSB Random
+                      </button>
+                      <button 
+                        className={algorithm === 'dct' ? "active" : ""} 
+                        style={{ width: '100%', textAlign: 'left' }}
+                        onClick={() => setAlgorithm('dct')}
+                      >
+                      DCT (Frequency)
+                      </button>
+                  </div>
+                </div>
+              </div>
 
-          <div>
-            <div className="label" style={{ marginBottom: '12px' }}>Data Volume</div>
-            <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
-              <button className={dataLoad === 'low' ? "active" : ""} onClick={() => setDataLoad('low')}>Low Load</button>
-              <button className={dataLoad === 'med' ? "active" : ""} onClick={() => setDataLoad('med')}>Medium Load</button>
-              <button className={dataLoad === 'high' ? "active" : ""} onClick={() => setDataLoad('high')}>High Load</button>
-            </div>
-          </div>
+              <div>
+                <div className="config-section">
+                  <div className="label" style={{ marginBottom: '12px' }}>Data Volume</div>
+                    <div className="button" style={{ flexDirection: 'column', width: '100%' }}>
+                      <button className={dataLoad === 'low' ? "active" : ""} onClick={() => setDataLoad('low')}>Low Load</button>
+                      <button className={dataLoad === 'med' ? "active" : ""} onClick={() => setDataLoad('med')}>Medium Load</button>
+                      <button className={dataLoad === 'high' ? "active" : ""} onClick={() => setDataLoad('high')}>High Load</button>
+                    </div>
+                  </div>
+                </div>
 
-            <div style={{alignItems: 'center'}}>
-             <span className="label" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', fontSize: '0.9rem' }}>
-               {payloadText[dataLoad]}
-             </span>
-            </div>
-        </aside>
+                <div style={{alignItems: 'center'}}>
+                <span className="label" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', fontSize: '0.9rem' }}>
+                  {payloadText[dataLoad]}
+                </span>
+              </div>
+            </aside>
+          </aside>
 
-        {/* RIGHT SIDE: Visual Data View */}
-        <main style={{ flex: 1 }}>
-          <div className="preview-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-            
-            <div className="preview-column">
-              <span className="label">Original Image</span>
-              <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
-                <img src={currentSet.original} alt="Original Image" style={{ width: '100%', height: '100%' }} />
+          {/* RIGHT SIDE: Visual Data View */}
+          <main className='explanation-main-content'>
+            <div className="preview-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              
+              <div className="preview-column">
+                <span className="label">Original Image</span>
+                <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
+                  <img src={currentSet.original} alt="Original Image" style={{ width: '100%', height: '100%' }} />
+                </div>
+              </div>
+              
+              <div className="preview-column">
+                <span className="label">Data Map</span>
+                <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
+                  <img src={currentSet.dataMap} alt="Data Map" style={{ width: '100%', height: '100%' }} />
+                </div>
+              </div>
+
+              <div className="preview-column">
+                <span className="label">Stegged Result</span>
+                <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
+                  <img src={currentSet.stegged} alt="Stegged Result" style={{ width: '100%', height: '100%' }} />
+                </div>
               </div>
             </div>
-            
-            <div className="preview-column">
-              <span className="label">Data Map</span>
-              <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
-                <img src={currentSet.dataMap} alt="Data Map" style={{ width: '100%', height: '100%' }} />
-              </div>
-            </div>
+            <div style={{ height: '1.5rem' }}></div>
 
-            <div className="preview-column">
-              <span className="label">Stegged Result</span>
-              <div className="image-container" style={{ width: '100%', height: '220px', borderRadius: '12px', overflow: 'hidden' }}>
-                <img src={currentSet.stegged} alt="Stegged Result" style={{ width: '100%', height: '100%' }} />
-              </div>
+            <div className="glass-card" >
+              <label >Explanation</label>
+              <p className="explanation-text">
+                {algorithmText[algorithm]}
+              </p>
             </div>
-          </div>
-          <div style={{ height: '1.5rem' }}></div>
-
-          <div className="glass-card" >
-            <label >Explanation</label>
-            <p className="explanation-text">
-              {algorithmText[algorithm]}
-            </p>
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
+    </div>
   );
 };
 
