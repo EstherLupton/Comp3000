@@ -10,10 +10,32 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     const [progress, setProgress] = React.useState(0);
     const [dctOptions, setDctOptions] = React.useState(80);
     const [showPassword, setShowPassword] = React.useState(false);
+    const [ validImage, setValidImage] = React.useState(true);
     
 
-    const onImageUpload = (e) => {
+    const onImageUpload = async (e) => {
         const file = e.target ? e.target.files[0] : e;
+
+        try {
+            const formData = new FormData();
+            formData.append("image", file);
+            const response = await fetch("http://localhost:5000/validate-image", {
+                method: "POST",
+                body: formData,
+            });
+            console.log("Validation response status:", response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Response error:", errorData);
+                alert(`Image validation failed: ${errorData.message || "Invalid image."}`);
+                setValidImage(false);
+                return;
+            }
+        } catch (error) {
+            console.error("Error validating image:", error);
+        }
+
         if (!file) return;
         setImageFile(file);
         setPreviewUrl(URL.createObjectURL(file));
@@ -64,8 +86,8 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             setProgress(100);
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Response error:", errorText);
+                const errorData = await response.json();
+                console.error("Response error:", errorData);
                 alert("Failed to extract message. Status: " + response.status);
                 return;
             }
@@ -167,7 +189,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             )}
             <div style={{height: '20px'}}></div>
 
-            <button className="submit-button" onClick={handleExtract} disabled={loading || !imageFile || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
+            <button className="submit-button" onClick={handleExtract} disabled={loading || !imageFile || !validImage||(embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Extracting..." : "Extract Message"}
             </button>
 

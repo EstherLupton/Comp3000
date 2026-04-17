@@ -11,6 +11,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     const [previewUrl, setPreviewUrl] = React.useState(null);
     const [dctOptions, setDctOptions] = React.useState(80);
     const [showPassword, setShowPassword] = React.useState(false);
+    const [ validImage, setValidImage] = React.useState(true);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -52,9 +53,9 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             });
             
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Response error:", errorText);
-                alert("Failed to embed message.");
+                const errorData = await response.json();
+                console.error("Response error:", errorData);
+                alert(`Error: ${errorData.message || "Failed to embed message."}`);
                 return;
             }
 
@@ -108,12 +109,33 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 
     const onImageUpload = async (e) => {
         const file = e.target ? e.target.files[0] : e; 
-        if (!file) return;
+
+        try {
+            const formData = new FormData();
+            formData.append("image", file);
+            const response = await fetch("http://localhost:5000/validate-image", {
+                method: "POST",
+                body: formData,
+            });
+            console.log("Validation response status:", response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Response error:", errorData);
+                alert(`Image validation failed: ${errorData.message || "Invalid image."}`);
+                setValidImage(false);
+                return;
+            }
+        } catch (error) {
+            console.error("Error validating image:", error);
+        }
 
         const url = URL.createObjectURL(file);
         setImageFile(file);
         setPreviewUrl(url);
         setOriginalImage(url)
+
+        if (!file) return;
 
         try {
             const formData = new FormData();
@@ -126,8 +148,10 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
 
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Capacity error response:", errorText);
+                const errorData = await response.json();
+                console.error("Response error:", errorData);
+                alert(`Failed to check image capacity: ${errorData.message || "Unknown error."}`);
+                console.error("Capacity error response:", errorData);
                 return;
             }
             
@@ -254,7 +278,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             </div>
             <div style={{height: '20px'}}></div>
 
-            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
+            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message  || !validImage || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
                 {loading ? "Embedding..." : "Embed Message"}
             </button>
             <div style={{height: '20px'}}></div>
