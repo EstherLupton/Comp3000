@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useCallback, useEffect } from "react";
 
 
 function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDifferenceMap, setSteggedUrl, setOriginalImage, steggedUrl }) {
@@ -24,6 +24,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             alert("Please enter a secret key for random LSB.");
             return;
         }
+
 
         setLoading(true);
 
@@ -133,8 +134,10 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
         setOriginalImage(url)
 
         if (!file) return;
+    };
 
-        try {
+    const calculateCapaity = useCallback(async (file) => {  
+         try {
             const formData = new FormData();
             formData.append("image", file);
             formData.append("embedMethod", embedMethod);
@@ -164,8 +167,13 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
         } catch (error) {
             console.error("Error checking image capacity:", error);
         }
+    }, [embedMethod]);
 
-    };
+    useEffect(() => {
+        if (imageFile) {
+            calculateCapaity(imageFile, embedMethod);
+        }
+    }, [imageFile, embedMethod, calculateCapaity]);
 
     const handleTextareaChange = (e) => {
     setMessage(e.target.value);
