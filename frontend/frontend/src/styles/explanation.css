@@ -1,16 +1,15 @@
 /* --- FULL SCREEN DEFAULTS --- */
 .explanation-content-wrapper {
     display: flex;
-    flex-direction: row; /* Sidebar next to content */
+    flex-direction: row; 
     gap: 2.5rem;
     align-items: flex-start;
 }
 
 .explanation-sidebar {
-    flex: 0 0 280px; /* Sidebar stays 280px wide on desktop */
+    flex: 0 0 280px; 
 }
 
-/* Inside the Sidebar Card: Stack them vertically on desktop */
 .explanation-sidebar .glass-card {
     display: flex;
     flex-direction: column; 
@@ -19,22 +18,21 @@
 }
 
 .explanation-main-content {
-    flex: 1; /* Main content takes up the rest of the space */
+    flex: 1;
 }
 
-/* --- HALF SCREEN / MOBILE (Responsive) --- */
 @media (max-width: 1200px) {
     .explanation-content-wrapper {
-        flex-direction: column; /* Stack sidebar ON TOP of content */
+        flex-direction: column; 
         align-items: stretch;
     }
 
     .explanation-sidebar {
         flex: none;
-        width: 100%; /* Sidebar takes full width when at the top */
+        width: 100%;
     }
 
-    /* Here is the magic: Change the inner buttons to side-by-side only when stacked */
+
     .explanation-sidebar .glass-card {
         flex-direction: row; 
         justify-content: space-around;

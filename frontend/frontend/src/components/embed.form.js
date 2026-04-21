@@ -157,8 +157,13 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             
             const data = await response.json();
 
-            const maxBits = data.capacity.bits;
-            setCapacity(Math.floor((maxBits / 8)*0.99545));
+            if (embedMethod === "lsb") {
+                const maxChars = Math.floor((data.capacity.bits / 8) * 0.994);
+                setCapacity(maxChars);
+            } else if (embedMethod === "dct") {
+                setCapacity(Math.floor((data.capacity.bits / 8) * 0.97));
+            }
+
         } catch (error) {
             console.error("Error checking image capacity:", error);
         }

@@ -9,13 +9,12 @@ import { binaryToText } from '../../utils/convert.utils.js';
  * https://scispace.com/pdf/an-improved-dct-based-steganography-technique-kp4xyp407g.pdf
  */
 
-async function dctExtract(imagePath, messageLength, dctOptions) {
+async function dctExtract(imagePath) {
     const image = sharp(imagePath);
     const { data, info } = await image.removeAlpha().toColorspace('srgb').raw().toBuffer({ resolveWithObject: true });
 
     const delimiter = "1111111111111110";
     let binaryMessage = '';
-    let extractedBits = 0;
 
     for (let i = 0; i < info.height; i += 8) {
         for (let j = 0; j < info.width; j += 8) {
@@ -25,29 +24,21 @@ async function dctExtract(imagePath, messageLength, dctOptions) {
 
             const block = getBlock(data, j, i, info.width);
             const r = block.map(row => row.map(pixel => pixel[0]));
-            
+
             const dctR = applyForwardDct(r);
             const quantR = quantize(dctR);
 
             const dcCoeff = Math.round(quantR[0][0]);
-           
-            const extractedBit = Math.round(dcCoeff / 2) % 2 === 0 ? '0' : '1';
 
-            if (extractedBits === 0) {
-                const rVal = r[0][0]; 
-            }
+            const remainder = ((dcCoeff % 4) + 4) % 4;
+            const bit = remainder >= 2 ? '1' : '0';
 
-            binaryMessage += extractedBit;
-            extractedBits++;
+            binaryMessage += bit;
 
             if (binaryMessage.endsWith(delimiter)) {
                 const message = binaryToText(binaryMessage.slice(0, -delimiter.length));
                 return message;
             }
-
-            if (messageLength && extractedBits >= (messageLength * 8) + delimiter.length)
-                break;
-            
         }
     }
 
