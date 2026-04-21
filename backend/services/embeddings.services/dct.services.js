@@ -78,11 +78,12 @@ async function dctEmbed(imagePath, hiddenData) {
         }
     }
 
-    const outputDirectory = 'uploads/stegged';
-    if (!fs.existsSync(outputDirectory)) {
-        fs.mkdirSync(outputDirectory, { recursive: true });
+    const steggedDirectory = 'uploads/stegged';
+    if (!fs.existsSync(steggedDirectory)) {
+        fs.mkdirSync(steggedDirectory, { recursive: true });
     }
-    const outputPath = path.join(outputDirectory, `stegged_${fileId}.png`);
+    const outputPath = path.join(steggedDirectory, `stegged_${fileId}.png`);
+    console.log("Creating stegged image at:", outputPath);
 
     await sharp(Buffer.from(newPixels), {
         raw: { width: info.width, height: info.height, channels: 3 }
@@ -93,7 +94,7 @@ async function dctEmbed(imagePath, hiddenData) {
 
     const differenceMapPath = await differenceMap(originalPath, outputPath, fileId);
 
-    return { imageEmbeddedPath, differenceMapPath };
+    return { outputPath, differenceMapPath };
 }
 
 async function differenceMap(originalImagePath, steggedImagePath, fileId) {

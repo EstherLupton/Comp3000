@@ -9,7 +9,6 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     const [remainingCapacity, setCapacity] = React.useState(null);
     const [isDragging, setIsDragging] = React.useState(false);
     const [previewUrl, setPreviewUrl] = React.useState(null);
-    const [dctOptions, setDctOptions] = React.useState(80);
     const [showPassword, setShowPassword] = React.useState(false);
     const [ validImage, setValidImage] = React.useState(true);
 
@@ -41,8 +40,6 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             if (lsbType === "random"){ 
                 formData.append("secretKey", secretKey);
             }
-        } else if (embedMethod === "dct") {
-            formData.append("dctOptions", dctOptions);
         }
 
         try {

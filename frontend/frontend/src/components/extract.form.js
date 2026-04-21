@@ -8,7 +8,6 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
     const [isDragging, setIsDragging] = React.useState(false);
     const [secretKey, setSecretKey] = React.useState("");
     const [progress, setProgress] = React.useState(0);
-    const [dctOptions, setDctOptions] = React.useState(80);
     const [showPassword, setShowPassword] = React.useState(false);
     const [ validImage, setValidImage] = React.useState(true);
     
@@ -70,9 +69,6 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
         formData.append("lsbType", lsbType);
         if (lsbType === "random") {
             formData.append("secretKey", secretKey);
-        }
-        if (embedMethod === "dct") {
-            formData.append("dctOptions", dctOptions);
         }
 
         try {

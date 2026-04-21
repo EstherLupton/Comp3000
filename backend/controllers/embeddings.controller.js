@@ -54,10 +54,10 @@ async function dctEmbedding(req, res) {
         if (!hiddenData) {
             return res.status(400).json({ message: 'No message provided to embed' });
         }
-        const dctOptions = parseInt(req.body?.dctOptions) || 10;
-        const { imageEmbeddedPath, differenceMapPath } = await dctEmbed(storagePath, hiddenData, dctOptions);
+        const { outputPath, differenceMapPath } = await dctEmbed(storagePath, hiddenData);
+        console.log("DCT embedding completed. Embedded image path:", outputPath, "Difference map path:", differenceMapPath);
         
-        const embedNormalizedPath = imageEmbeddedPath.replace(/\\/g, "/");
+        const embedNormalizedPath = outputPath.replace(/\\/g, "/");
         const differenceNormalizedPath = differenceMapPath.replace(/\\/g, "/");
         
         return res.status(200).json({

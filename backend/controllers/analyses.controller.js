@@ -30,18 +30,13 @@ async function lsbAnalyses (req, res) {
 async function dctAnalyses (req, res) {
     try {
         const storagePath = req.file?.path;
-        const dctOptions = req.body?.dctOptions
 
 
         if (!storagePath || !fs.existsSync(storagePath)) {
             return res.status(400).json({ message: 'No valid image file provided' });
         }
 
-        if (!dctOptions) {
-            return res.status(400).json({ message: 'No dct frequency provided' });
-        }
-
-        const hiddenData = await dctExtract(storagePath, dctOptions);
+        const hiddenData = await dctExtract(storagePath);
         
         return res.status(200).json({ hiddenData });
 
