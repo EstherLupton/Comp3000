@@ -1,6 +1,5 @@
 /* Form styles for the application */
 
-/* ── Text inputs & textarea ── */
 .placeholder-input,
 .input-box input {
     background: var(--input-bg) !important;
@@ -27,7 +26,6 @@
     opacity: 0.5;
 }
  
-/* ── Icon-inset input wrapper (used for password field) ── */
 .input-with-icon {
     position: relative;
     display: flex;
@@ -40,7 +38,6 @@
     padding-right: 40px;
 }
  
-/* ── Drag-and-drop file zone ── */
 .file-drop-area {
     border: 2px dashed var(--card-border);
     background: var(--button-group-bg);
@@ -69,19 +66,21 @@
     color: var(--text-secondary);
 }
 
-/* ── Read-only result boxes ── */
 .extracted-result-box {
     background: var(--input-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--border-radius-md);
     padding: 1rem;
-    width: 100%;
-    overflow-wrap: break-word;
-    word-break: break-all;
+    width: 100%; 
+    max-width: 100%;
+    display: block;
+    height: auto;
+    min-height: 100px; 
+    white-space: pre-wrap; 
+    overflow-wrap: anywhere;
+    word-break: normal;
     box-sizing: border-box;
     color: var(--text-primary);
-    min-height: 100px;
-    white-space: pre-wrap;
 }
  
 .secret-message-preview {

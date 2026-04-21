@@ -19,7 +19,6 @@
     object-fit: contain;
 }
  
-/* Single authoritative empty-state — flex centred box with dashed border */
 .empty-state {
     display: flex;
     flex-direction: column;

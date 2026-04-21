@@ -190,7 +190,7 @@ function ExtractForm({ embedMethod, setEmbedMethod, lsbType, setLsbType }) {
             </button>
 
             {extractedMessage && (
-                <div className="stegged-result mt-4">
+                <div className="stegged-result">
                     <div className="input-box">
                         <label>Extracted Message</label>
                         <div className="extracted-result-box" >
