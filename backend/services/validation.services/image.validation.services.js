@@ -29,7 +29,7 @@ export async function validateImage(fileBuffer, fileName, mimeType) {
 
     const maxWidth = 10000;
     const maxHeight = 10000;
-    const maxFileSize = 15 * 1024 * 1024; // 15 Mb
+    const maxFileSize = 60 * 1024 * 1024; // 60 Mb
 
     if (metadata.width > maxWidth || metadata.height > maxHeight) {
         throw new Error('Image dimensions exceed allowed limits');
