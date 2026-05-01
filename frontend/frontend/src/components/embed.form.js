@@ -127,13 +127,13 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
         } catch (error) {
             console.error("Error validating image:", error);
         }
-
+        
+        if (!file) return;
         const url = URL.createObjectURL(file);
         setImageFile(file);
         setPreviewUrl(url);
         setOriginalImage(url)
 
-        if (!file) return;
     };
 
     const calculateCapaity = useCallback(async (file) => {  
@@ -158,7 +158,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             const data = await response.json();
 
             if (embedMethod === "lsb") {
-                const maxChars = Math.floor((data.capacity.bits / 8) * 0.994);
+                const maxChars = Math.floor((data.capacity.bits / 8) * 0.99);
                 setCapacity(maxChars);
             } else if (embedMethod === "dct") {
                 setCapacity(Math.floor((data.capacity.bits / 8) * 0.97));
@@ -181,6 +181,18 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     e.target.style.height = 'inherit';
     e.target.style.height = `${e.target.scrollHeight}px`
     };
+
+    // Add this right before the return ()
+    const debugDisabled = {
+        loading,
+        noImage: !imageFile,
+        noMessage: !message,
+        invalidImage: !validImage,
+        randomLsbMissingKey: (embedMethod === "lsb" && lsbType === "random" && !secretKey)
+    };
+
+    console.log("Button Status:", debugDisabled);
+
 
     return (
         <div className="embed-form">
@@ -288,7 +300,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             </div>
             <div style={{height: '20px'}}></div>
 
-            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message  || !validImage || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
+            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message  || !validImage || (embedMethod === "lsb" && lsbType === "random" && !secretKey) || remainingCapacity - message.length < 0}>
                 {loading ? "Embedding..." : "Embed Message"}
             </button>
             <div style={{height: '20px'}}></div>
