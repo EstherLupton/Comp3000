@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
+import fsPromises from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import { validateImageCapacityDct } from '../validation.services/image.validation.services.js';
 import { pngToJpg } from '../../utils/convert.utils.js';
@@ -83,16 +84,22 @@ async function dctEmbed(imagePath, hiddenData) {
         fs.mkdirSync(steggedDirectory, { recursive: true });
     }
     const outputPath = path.join(steggedDirectory, `stegged_${fileId}.png`);
-    console.log("Creating stegged image at:", outputPath);
+    let differenceMapPath;
 
-    await sharp(Buffer.from(newPixels), {
-        raw: { width: info.width, height: info.height, channels: 3 }
-    })
-        .toColorspace('srgb')
-        .png({ compressionLevel: 9, adaptiveFiltering: false })
-        .toFile(outputPath);
+    try {
+        await sharp(Buffer.from(newPixels), {
+            raw: { width: info.width, height: info.height, channels: 3 }
+        })
+            .toColorspace('srgb')
+            .png({ compressionLevel: 9, adaptiveFiltering: false })
+            .toFile(outputPath);
 
-    const differenceMapPath = await differenceMap(originalPath, outputPath, fileId);
+        differenceMapPath = await differenceMap(originalPath, outputPath, fileId);
+
+        await emptyTempFolder();
+    } finally {
+        fs.unlinkSync(originalPath);
+    }
 
     return { outputPath, differenceMapPath };
 }
@@ -139,6 +146,23 @@ async function differenceMap(originalImagePath, steggedImagePath, fileId) {
         .toFile(outputPath);
 
     return outputPath;
+}
+
+async function emptyTempFolder() {
+    try {
+        const tempPath = path.resolve('uploads/temp');
+
+        const files = await fsPromises.readdir(tempPath);
+
+        for (const file of files) {
+            const filePath = path.join(tempPath, file);
+            await fsPromises.rm(filePath, { recursive: true, force: true });
+        }
+
+        console.log('Temp folder cleared');
+    } catch (err) {
+        console.error('Error clearing temp folder:', err);
+    }
 }
 
 export { dctEmbed };

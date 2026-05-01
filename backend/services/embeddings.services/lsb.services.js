@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid'
 import { keyToSeed, XORShift } from '../../utils/prng.utils.js';
@@ -16,7 +17,11 @@ async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", s
         fs.mkdirSync(outputDirectory, { recursive: true });
     }
     const originalPath = path.join(outputDirectory, `original_${fileId}.png`);
+    try {
     await sharp(imagePath).toFile(originalPath);
+    } finally {
+        if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    }
 
     if (lsbType.mode === "random" && lsbType.secretKey) {
         newPixels = embedRandomly(pixels, messageBinary, lsbType.secretKey, pixels.info.channels);
@@ -28,6 +33,8 @@ async function lsbEmbed(imagePath, hiddenData, lsbType = { mode: "sequential", s
 
     const imageEmbeddedPath = await createImageFromPixels(newPixels, pixels.info, fileId);
     const differenceMapPath = await differenceMap(originalPath, imageEmbeddedPath, fileId);
+
+    await emptyTempFolder();
 
     return {imageEmbeddedPath, differenceMapPath}
 }
@@ -164,6 +171,23 @@ async function differenceMap(originalImagePath, steggedImagePath, fileId) {
     }).toFile(outputPath);
 
     return outputPath;
+}
+
+async function emptyTempFolder() {
+    try {
+        const tempPath = path.resolve('uploads/temp');
+
+        const files = await fsPromises.readdir(tempPath);
+
+        for (const file of files) {
+            const filePath = path.join(tempPath, file);
+            await fsPromises.rm(filePath, { recursive: true, force: true });
+        }
+
+        console.log('Temp folder cleared');
+    } catch (err) {
+        console.error('Error clearing temp folder:', err);
+    }
 }
 
 export { lsbEmbed, differenceMap };

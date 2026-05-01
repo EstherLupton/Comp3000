@@ -13,6 +13,6 @@ function createStorage(folderPath){
 }
 
 export const uploadOrigionalImage = multer({ storage: createStorage('uploads/originals') });
-export const uploadSteggedImage = multer({ storage: createStorage('uploads/stegged') });
+export const uploadSteggedImage = multer({ storage: createStorage('uploads/temp') });
 export const uploadAnalysis= multer({ storage: createStorage('uploads/analysis') });
 export const uploadReports = multer({ storage: createStorage('uploads/reports') });
