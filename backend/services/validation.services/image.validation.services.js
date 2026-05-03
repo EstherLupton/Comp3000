@@ -39,9 +39,11 @@ export async function validateImage(fileBuffer, fileName, mimeType) {
         throw new Error('Image file size exceeds allowed limit');
     }
 
+    const tolerance = 0.005;
     const expectedUncompressedSize = metadata.width * metadata.height * (metadata.channels || 3);
     const { data: rawBuffer } = await image.raw().toBuffer({ resolveWithObject: true });
-    if (rawBuffer.length !== expectedUncompressedSize) {
+    const difference = Math.abs(rawBuffer.length - expectedUncompressedSize);
+    if (difference > tolerance * expectedUncompressedSize) {
         throw new Error('Image uncompressed size is inconsistent with metadata');
     }
 
