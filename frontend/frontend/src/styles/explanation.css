@@ -448,11 +448,75 @@
 }
 
 @media (max-width: 700px) {
-    .explanation-tab-content {
+    .tab-content {
         grid-template-columns: 1fr;
     }
 
     .explanation-preview-grid {
         grid-template-columns: 1fr;
+    }
+
+    .explanation-sidebar .glass-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dct-section {
+        grid-template-columns: 1fr;
+    }
+
+    .dct-text {
+        max-width: 100%;
+    }
+
+    .explanation-preview-image {
+        height: 130px;
+    }
+
+    .pixel-grid .pixel-cell {
+        height: 20px;
+    }
+
+    .bit-cell {
+        width: 22px;
+        height: 26px;
+        font-size: 11px;
+    }
+
+    .encode-row {
+        gap: 5px;
+    }
+
+    .encode-character {
+        font-size: 16px;
+    }
+
+    .key-index {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+
+    .frequency-label {
+        width: 56px;
+    }
+
+    .inner-card {
+        padding: 0.75rem 0.85rem;
+    }
+
+    .explanation-explainer-card {
+        padding: 0.85rem;
+    }
+
+    .explanation-content-wrapper,
+    .explanation-main-content {
+        min-width: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .pixel-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
