@@ -27,9 +27,9 @@ export async function validateImage(fileBuffer, fileName, mimeType) {
         throw new Error('Corrupted image file');
     }
 
-    const maxWidth = 5000;
-    const maxHeight = 5000;
-    const maxFileSize = 5 * 1024 * 1024;
+    const maxWidth = 10000;
+    const maxHeight = 10000;
+    const maxFileSize = 60 * 1024 * 1024; // 60 Mb
 
     if (metadata.width > maxWidth || metadata.height > maxHeight) {
         throw new Error('Image dimensions exceed allowed limits');
@@ -39,9 +39,11 @@ export async function validateImage(fileBuffer, fileName, mimeType) {
         throw new Error('Image file size exceeds allowed limit');
     }
 
+    const tolerance = 0.005;
     const expectedUncompressedSize = metadata.width * metadata.height * (metadata.channels || 3);
     const { data: rawBuffer } = await image.raw().toBuffer({ resolveWithObject: true });
-    if (rawBuffer.length !== expectedUncompressedSize) {
+    const difference = Math.abs(rawBuffer.length - expectedUncompressedSize);
+    if (difference > tolerance * expectedUncompressedSize) {
         throw new Error('Image uncompressed size is inconsistent with metadata');
     }
 
@@ -68,21 +70,26 @@ export async function validateImageCapacity(imagePath, hiddenData) {
     return { pixels, messageBinary };
 }
 
-export async function validateImageCapacityDct(imagePath, hiddenData) {
-    const image = sharp(imagePath);
-    const pixels = await image.raw().toBuffer({ resolveWithObject: true });
-    const { width, height } = pixels.info;
+export async function validateImageCapacityDct(imagePathOrBuffer, hiddenData) {
+    const { data, info } = await sharp(imagePathOrBuffer).removeAlpha().toColorspace('srgb').raw().toBuffer({ resolveWithObject: true });
+
+    const { width, height } = info;
+
     const blocksWide = Math.floor(width / 8);
     const blocksHigh = Math.floor(height / 8);
     const totalBlocks = blocksWide * blocksHigh;
-    const usableBlocks = Math.floor(totalBlocks / 3);
-    const capacityBits = usableBlocks;
+
+    const DELIMITER_BITS = 16;
+    const capacityBits = Math.max(0, totalBlocks - DELIMITER_BITS);
+
     let messageBinary = messageToBinary(hiddenData);
     messageBinary += "1111111111111110";
+
     if (messageBinary.length > capacityBits) {
-        throw new Error("Message too long to embed in image");
+        throw new Error(`Message too long to embed in image. Required: ${messageBinary.length} bits, Available: ${capacityBits} bits`);
     }
 
+    const pixels = { data, info };
     return { pixels, messageBinary };
 }
 
@@ -101,27 +108,22 @@ export async function calculateImageCapacityLsb(imagePath) {
 }
 
 export async function calculateImageCapacityDct(imagePath) {
-    const image = sharp(imagePath);
-    const pixels = await image.raw().toBuffer({ resolveWithObject: true });
+    const { info } = await sharp(imagePath).removeAlpha().toColorspace('srgb').raw().toBuffer({ resolveWithObject: true });
 
-    const { width, height } = pixels.info;
+    const { width, height } = info;
 
     const blocksWide = Math.floor(width / 8);
     const blocksHigh = Math.floor(height / 8);
     const totalBlocks = blocksWide * blocksHigh;
-    const usableBlocks = Math.floor(totalBlocks / 3);
+    const DELIMITER_BITS = 16;
+    const capacityBits = Math.max(0, totalBlocks - DELIMITER_BITS);
+    const capacityChars = Math.floor(capacityBits / 8);
 
-    const capacityBits = usableBlocks;
-
-    const availableBits = Math.max(0, capacityBits - 16);
-    
-    const capacityChars = Math.floor(availableBits / 8);
-
-    return { 
-        capacityBits: availableBits, 
+    return {
+        capacityBits: capacityBits,
         capacityChars,
         totalBlocks,
-        usableBlocks
+        usableBlocks: capacityBits
     };
 }
 

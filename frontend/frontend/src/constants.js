@@ -22,9 +22,9 @@ export const INSTRUCTIONS = {
     dct: {
       title: "DCT Frequency Embedding",
       steps: [
-        "TBC",
-        "TBC",
-        "TBC"
+        "Select an image you wish to hide your message in",
+        "Enter your secret message",
+        "Your secret message is hidden inside the image by modifying the frequency coefficients of the image rather than its pixels directly. This method is more robust against detection and compression but is more complex than LSB."
       ]
     }
   },
@@ -34,7 +34,7 @@ export const INSTRUCTIONS = {
         title: "Sequential LSB",
         steps: [
           "Select an image containing a secret message",
-          "The tool will extract the hidden message from the image, revealing the secret infromation stored inside"
+          "The tool will extract the hidden message from the image, revealing the secret information stored inside"
         ]
       },
       random: {
@@ -49,9 +49,8 @@ export const INSTRUCTIONS = {
     dct: {
       title: "DCT Frequency Extraction",
       steps: [
-        "TBC",
-        "TBC",
-        "TBC"
+        "Select an image you wish to extract your message from",
+        "Your secret message is extracted from the image by analysing the modified frequency coefficients"
       ]
     }
   }

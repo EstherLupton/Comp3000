@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useCallback, useEffect } from "react";
 
 
 function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDifferenceMap, setSteggedUrl, setOriginalImage, steggedUrl }) {
@@ -9,7 +9,6 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     const [remainingCapacity, setCapacity] = React.useState(null);
     const [isDragging, setIsDragging] = React.useState(false);
     const [previewUrl, setPreviewUrl] = React.useState(null);
-    const [dctOptions, setDctOptions] = React.useState(80);
     const [showPassword, setShowPassword] = React.useState(false);
     const [ validImage, setValidImage] = React.useState(true);
 
@@ -26,6 +25,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             return;
         }
 
+
         setLoading(true);
 
         const formData = new FormData();
@@ -41,8 +41,6 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             if (lsbType === "random"){ 
                 formData.append("secretKey", secretKey);
             }
-        } else if (embedMethod === "dct") {
-            formData.append("dctOptions", dctOptions);
         }
 
         try {
@@ -126,18 +124,21 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 setValidImage(false);
                 return;
             }
+            setValidImage(true);
         } catch (error) {
             console.error("Error validating image:", error);
         }
-
+        
+        if (!file) return;
         const url = URL.createObjectURL(file);
         setImageFile(file);
         setPreviewUrl(url);
         setOriginalImage(url)
 
-        if (!file) return;
+    };
 
-        try {
+    const calculateCapaity = useCallback(async (file) => {  
+         try {
             const formData = new FormData();
             formData.append("image", file);
             formData.append("embedMethod", embedMethod);
@@ -157,13 +158,23 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             
             const data = await response.json();
 
-            const maxBits = data.capacity.bits;
-            setCapacity(Math.floor((maxBits / 8)*0.99545));
+            if (embedMethod === "lsb") {
+                const maxChars = Math.floor((data.capacity.bits / 8) * 0.99);
+                setCapacity(maxChars);
+            } else if (embedMethod === "dct") {
+                setCapacity(Math.floor((data.capacity.bits / 8) * 0.97));
+            }
+
         } catch (error) {
             console.error("Error checking image capacity:", error);
         }
+    }, [embedMethod]);
 
-    };
+    useEffect(() => {
+        if (imageFile) {
+            calculateCapaity(imageFile, embedMethod);
+        }
+    }, [imageFile, embedMethod, calculateCapaity]);
 
     const handleTextareaChange = (e) => {
     setMessage(e.target.value);
@@ -171,6 +182,18 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
     e.target.style.height = 'inherit';
     e.target.style.height = `${e.target.scrollHeight}px`
     };
+
+    // Add this right before the return ()
+    const debugDisabled = {
+        loading,
+        noImage: !imageFile,
+        noMessage: !message,
+        invalidImage: !validImage,
+        randomLsbMissingKey: (embedMethod === "lsb" && lsbType === "random" && !secretKey)
+    };
+
+    console.log("Button Status:", debugDisabled);
+
 
     return (
         <div className="embed-form">
@@ -278,7 +301,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
             </div>
             <div style={{height: '20px'}}></div>
 
-            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message  || !validImage || (embedMethod === "lsb" && lsbType === "random" && !secretKey)}>
+            <button className="submit-button" onClick={handleSubmit} disabled={loading || !imageFile || !message  || !validImage || (embedMethod === "lsb" && lsbType === "random" && !secretKey) || remainingCapacity - message.length < 0}>
                 {loading ? "Embedding..." : "Embed Message"}
             </button>
             <div style={{height: '20px'}}></div>
