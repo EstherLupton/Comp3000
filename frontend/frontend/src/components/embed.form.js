@@ -124,6 +124,7 @@ function EmbedForm({ embedMethod, setEmbedMethod, lsbType, setLsbType, setDiffer
                 setValidImage(false);
                 return;
             }
+            setValidImage(true);
         } catch (error) {
             console.error("Error validating image:", error);
         }
